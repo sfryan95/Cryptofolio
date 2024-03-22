@@ -1,0 +1,26 @@
+.combo-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -14px;
+}
+
+#combo-box-demo {
+  margin-left: 16px;
+}
+
+.form-component {
+  margin: 0 16px;
+}
+
+#submit {
+  color: #b1b1b1;
+  border-color: #b1b1b1;
+  margin-left: 16px;
+}
+
+#submit:hover {
+  color: white;
+  border-color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+}

@@ -1,0 +1,28 @@
+.gainers,
+.losers {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gainers {
+  margin-top: 75px;
+  margin-bottom: 100px;
+}
+
+.home-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.home-header {
+  width: 100%;
+}
+
+.card {
+  margin: 0 50px;
+}
