@@ -8,19 +8,17 @@ import { fileURLToPath } from 'url';
 
 const app = express();
 const PORT = 3002;
-const API_Key = '223ce7d7-adcb-43f6-80be-55ea1980d51b'; /* process.env.CMC_PRO_API_KEY */
+const API_Key = process.env.CMC_PRO_API_KEY;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use(express.json());
-app.use(cors());
-app.use(express.static(path.join(__dirname, 'dist')));
-app.use((err, req, res, next) => {
-  console.error('An error occurred:', err);
-  res.status(500).json({ message: 'Internal Server Error' });
-});
+app.use(express.json()); // parses the request body if it is JSON and stores result in req.body
+app.use(express.urlencoded({ extended: true })); // parses data sent by HTML forms
+app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS)
+app.use(express.static(path.join(__dirname, 'dist'))); // Serve static files from the 'dist' directory
 
+// app.use('/api/home', homeRouter) // tells express to direct any request matching 'api/home'
 app.get('/api/home/', async (req, res) => {
   console.log('made it to api in server');
   try {
@@ -67,13 +65,21 @@ app.get('/api/portfolio/:symbol', async (req, res) => {
   }
 });
 
-// app.use((req, res, next) => {
-//   if (req.path.startsWith('/api')) {
-//     next(); // Pass control to the next middleware if it's an API call
-//   } else {
-//     res.sendFile(path.join(__dirname, 'dist', 'index.html')); // Serve index.html for non-API requests
-//   }
-// });
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    next(); // Pass control to the next middleware if it's an API call
+  } else {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html')); // Serve index.html for non-API requests
+  }
+});
+
+app.use((err, req, res, next) => {
+  // Error handling middleware
+  console.error('An error occurred:', err);
+  res.status(500).json({ message: 'Internal Server Error' });
+});
+
+app.use('*', (req, res) => res.sendStatus(404)); // handles requests to unknown routes
 
 detectPort(PORT, (err, availablePort) => {
   if (err) {
