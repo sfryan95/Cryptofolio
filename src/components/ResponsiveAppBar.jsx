@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -15,12 +15,14 @@ import CustomLogo from '../images/logo.png';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './ResponsiveAppBar.css';
 
-const pages = ['Home', 'Portfolio'];
-const settings = ['Favorites', 'Logout'];
+function ResponsiveAppBar({ isAuthenticated, setIsAuthenticated }) {
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
 
-function ResponsiveAppBar() {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const pages = ['Home', 'Portfolio'];
+  const loginAndSignUpPages = ['Login', 'SignUp'];
+  const menuPages = !isAuthenticated ? ['Home', 'Portfolio', 'Login', 'SignUp'] : ['Home', 'Portfolio'];
+  const settings = ['Favorites', 'Logout'];
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -49,7 +51,7 @@ function ResponsiveAppBar() {
 
   return (
     <AppBar position="static">
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" sx={{ p: 0 }}>
         <Toolbar disableGutters>
           <img src={CustomLogo} alt="logo" className="navbar-logo-img" />
           <Typography
@@ -90,7 +92,7 @@ function ResponsiveAppBar() {
               sx={{
                 display: { xs: 'block', md: 'none' },
               }}>
-              {pages.map((page) => (
+              {menuPages.map((page) => (
                 <MenuItem
                   key={page}
                   onClick={() => {
@@ -132,35 +134,50 @@ function ResponsiveAppBar() {
               </Button>
             ))}
           </Box>
-
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Travis Howard" src="https://www.freep.com/gcdn/presto/2020/09/03/PDTF/bbad2932-c0b6-405b-8242-82f8bac85ed5-031120_big_sean_rg_07.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}>
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
+          {!isAuthenticated ? (
+            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>
+              {loginAndSignUpPages.map((page) => (
+                <Button
+                  key={page}
+                  onClick={() => {
+                    handleCloseNavMenu();
+                    handleNavigate(page);
+                  }}
+                  sx={{ my: 2, color: 'white', display: 'block' }}>
+                  {page}
+                </Button>
               ))}
-            </Menu>
-          </Box>
+            </Box>
+          ) : (
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt="Travis Howard" src="https://www.freep.com/gcdn/presto/2020/09/03/PDTF/bbad2932-c0b6-405b-8242-82f8bac85ed5-031120_big_sean_rg_07.jpg" />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: '45px' }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}>
+                {settings.map((setting) => (
+                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center">{setting}</Typography>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
+          )}
         </Toolbar>
       </Container>
     </AppBar>

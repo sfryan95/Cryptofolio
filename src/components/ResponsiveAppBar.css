@@ -4,3 +4,8 @@
   margin-right: 16px;
   border-radius: 4px;
 }
+
+/* to remove padding from container component */
+#root > div.portfolio-header > header > div {
+  padding: 0;
+}
