@@ -6,6 +6,7 @@ import 'dotenv/config';
 import { fileURLToPath } from 'url';
 import homeRoutes from './routes/homeRoutes.js';
 import portfolioRoutes from './routes/portfolioRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 const app = express();
 const PORT = 3002;
@@ -20,6 +21,7 @@ app.use(express.static(path.join(__dirname, 'dist'))); // Serve static files fro
 
 app.use('/api/home', homeRoutes);
 app.use('/api/portfolio', portfolioRoutes);
+app.use('/api/auth', authRoutes);
 
 app.use((req, res, next) => {
   if (req.path.startsWith('/api')) {
