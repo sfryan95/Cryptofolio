@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import GainersCards from './Gainers.jsx';
-import LosersCards from './Losers.jsx';
+import GainersAndLosersCards from './Gainers.jsx';
 import fetchGainersAndLosers from '../../utilities/HomeUtils.js';
 
 function Home() {
@@ -30,8 +29,7 @@ function Home() {
 
   return (
     <div className="home-body">
-      <GainersCards coinList={gainersAndLosers} />
-      <LosersCards coinList={gainersAndLosers} />
+      <GainersAndLosersCards coinList={gainersAndLosers} />
     </div>
   );
 }

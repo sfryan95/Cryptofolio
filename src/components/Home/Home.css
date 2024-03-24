@@ -1,20 +1,28 @@
-.gainers,
-.losers {
+.card {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
+  height: 150px;
+  width: 300px;
+  box-shadow: 6px 6px 8px 1px rgba(0, 0, 0, 0.5);
 }
 
-.gainers {
-  margin-top: 75px;
+.card:nth-child(-n + 3) {
   margin-bottom: 100px;
 }
 
 .home-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  margin-top: 150px;
+  display: grid;
+  place-items: center;
+}
+
+.gainersAndLosers {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 50px;
+  padding: 10px;
   width: 100%;
   height: 100%;
 }
