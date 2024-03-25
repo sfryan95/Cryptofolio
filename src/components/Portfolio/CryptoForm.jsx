@@ -16,7 +16,8 @@ export default function ComboBox({ coinList, rows, setRows }) {
   }
 
   function handleQuantityChange(event) {
-    setQuantity(event.target.value);
+    const { value } = event.target;
+    setQuantity(value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'));
   }
 
   const handleSubmit = async (e) => {
@@ -59,7 +60,7 @@ export default function ComboBox({ coinList, rows, setRows }) {
         renderInput={(params) => <TextField {...params} label="Coin" name="symbol" />}
         isOptionEqualToValue={(option, value) => option.symbol === value.symbol}
       />
-      <TextField onChange={handleQuantityChange} className="form-component" id="outlined-helperText" label="Quantity" name="quantity" value={quantity} />
+      <TextField onChange={handleQuantityChange} className="form-component" type="number" id="outlined-helperText" label="Quantity" name="quantity" value={quantity} />
       <Button variant="outlined" id="submit" type="submit" value="submit">
         Submit
       </Button>

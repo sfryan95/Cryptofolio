@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { PieChart, pieArcLabelClasses } from '@mui/x-charts/PieChart';
 
-const colors = ['#355472', '#3856f7', '#801eab'];
+const colors = ['#031E43', '#b51963', ' #3856f7', '#184D06', '#801eab', '#BF360C', '#004D40', '#550621', '#125866', '#256538', '#A03418', '#52597C', '#471084', '#CC1136', '#085F46'];
 
 const sizing = {
   margin: { right: 5 },
-  width: 250,
-  height: 250,
+  width: 300,
+  height: 300,
   legend: { hidden: true },
 };
 
@@ -27,7 +27,7 @@ export default function PieChartWithCustomizedLabel({ rows }) {
 
   const getArcLabel = (params) => {
     const percent = params.value / total;
-    if (percent * 100 >= 5) {
+    if (percent * 100 >= 3) {
       return `${(percent * 100).toFixed(0)}%`;
     }
   };
@@ -36,9 +36,10 @@ export default function PieChartWithCustomizedLabel({ rows }) {
     <PieChart
       series={[
         {
-          outerRadius: 100,
+          outerRadius: 150,
           data: chartData,
           arcLabel: getArcLabel,
+          arcLabelRadius: 110,
         },
       ]}
       sx={{

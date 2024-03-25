@@ -51,14 +51,14 @@ function ResponsiveAppBar({ isAuthenticated, setIsAuthenticated }) {
 
   return (
     <AppBar position="static">
-      <Container maxWidth="xl" sx={{ p: 0 }}>
+      <Container maxWidth={false} sx={{ p: 0, width: '100%' }}>
         <Toolbar disableGutters>
           <img src={CustomLogo} alt="logo" className="navbar-logo-img" />
           <Typography
             variant="h6"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="#"
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -108,7 +108,7 @@ function ResponsiveAppBar({ isAuthenticated, setIsAuthenticated }) {
             variant="h5"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="#"
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'none' },

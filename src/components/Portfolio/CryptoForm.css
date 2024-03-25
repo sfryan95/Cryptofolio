@@ -24,3 +24,7 @@
   border-color: white;
   background-color: rgba(255, 255, 255, 0.1);
 }
+
+#root > div.portfolio-body > form {
+  margin-top: 20px;
+}
