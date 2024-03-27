@@ -14,7 +14,9 @@ function Portfolio() {
 
   async function fetchUserPortfolio(username) {
     try {
-      const response = await axios.get(`http://localhost:3002/api/portfolio/users/${username}`);
+      console.log('Username:', username);
+      const response = await axios.get(`http://localhost:3002/api/portfolio/users/seanryan9five`);
+      console.log('Response:', response.data);
       if (response.data.length === 0) {
         console.log('No coins found for this user.');
         return [];
