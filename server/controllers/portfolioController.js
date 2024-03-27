@@ -1,6 +1,7 @@
 import axios from 'axios';
 import 'dotenv/config';
 const API_Key = process.env.CMC_PRO_API_KEY;
+import pool from '../database.js';
 
 const getAutoCompleteCoinList = async (req, res) => {
   console.log('coin list check');
@@ -36,25 +37,25 @@ const updatePortfolioData = async (req, res) => {
   }
 };
 
-const insertPortfolioData = async (req, res) => {}
+const insertPortfolioData = async (req, res) => {};
 const fetchPortfolioData = async (req, res) => {
-  const {username} = req.params;
-  if (!username) {
-    return res.status(400).json({ message: 'No username provided' });
-  }
+  const username = req.params.username;
   try {
-    const { rows } = await pool.query(
-      `SELECT portfolio.* FROM portfolio 
-      JOIN users ON users.id = portfolio.user_id
-      WHERE users.username = $1`,
-      [username]
-    );
-    res.json(rows.length ? rows : null); // Return the found portfolio data or null
-  } catch (e) {
-    console.error('Error finding portfolio data by username:', e);
+    const dbQuery = `
+      SELECT p.symbol, p.price
+      FROM portfolios p
+      JOIN users u ON p.user_id = u.id
+      WHERE u.username = $1;
+    `;
+    const { rows } = await pool.query(dbQuery, [username]);
+    res.json(rows);
+  } catch (error) {
+    console.error('Failed to fetch user portfolio', error);
+    res.status(500).send('Internal Server Error');
   }
-}
-const updateQuantity = async (req, res) => {}
-const deleteCoin = async (req, res) => {}
+};
+
+const updateQuantity = async (req, res) => {};
+const deleteCoin = async (req, res) => {};
 
 export { getAutoCompleteCoinList, updatePortfolioData, fetchPortfolioData };

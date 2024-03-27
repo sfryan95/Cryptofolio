@@ -6,7 +6,7 @@ import 'dotenv/config';
 import { fileURLToPath } from 'url';
 import homeRoutes from './routes/homeRoutes.js';
 import portfolioRoutes from './routes/portfolioRoutes.js';
-import authRoutes from './routes/authRoutes.js';
+// import authRoutes from './routes/authRoutes.js';
 
 const app = express();
 const PORT = 3002;

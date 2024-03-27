@@ -12,6 +12,19 @@ function Portfolio() {
   const [rows, setRows] = useState([]);
   const [coinList, setCoinList] = useState([]);
 
+  async function fetchUserPortfolio(username) {
+    try {
+      const response = await axios.get(`http://localhost:3002/api/portfolio/users/${username}`);
+      if (response.data.length === 0) {
+        console.log('No coins found for this user.');
+        return [];
+      }
+      return response.data;
+    } catch (error) {
+      console.error('There was an error fetching the portfolio:', error.message);
+    }
+  }
+
   useEffect(() => {
     async function fetchCoinList() {
       const cacheKey = 'autoCompleteCoinListKey';
@@ -46,14 +59,16 @@ function Portfolio() {
 
     async function initAndFetchData() {
       try {
-        const coinArr = fakeDataBaseEntry.map((item) => new CryptoCoin(item.id, item.name, item.symbol, item.quantity, item.price, item.percent_change_24h, item.allocation));
-        // const coinArr = await axios('http://localhost:3002/api/coins/seanryan9five');
-        // if (coinArr.data) {
-        //   console.log(coinArr.data); // Log to verify data structure
-        //   setRows(coinArr.data); // Adjust according to actual data structure
-        // } else {
-        //   console.log('No data received');
-        // }
+        const apiData = await fetchUserPortfolio('seanryan9five');
+
+        const coinArr = rows.map((dbItem) => {
+          const apiItem = apiData.find((apiCoin) => apiCoin.symbol === dbItem.symbol);
+          if (!apiItem) {
+            console.error(`No API data found for symbol: ${dbItem.symbol}`);
+            return null;
+          }
+          return new CryptoCoin(apiItem.id, apiItem.name, dbItem.symbol, dbItem.quantity, apiItem.price, apiItem.percent_change_24h);
+        });
         await updatePortfolio(coinArr);
         const totalValue = coinArr.reduce((acc, coin) => acc + coin.value, 0);
         coinArr.forEach((coin) => (coin.allocation = coin.value / totalValue));
@@ -70,7 +85,11 @@ function Portfolio() {
   return (
     <div className="portfolio-body">
       <PieChart rows={rows} />
-      <CryptoForm coinList={coinList} rows={rows} setRows={setRows} />
+      <CryptoForm
+        coinList={coinList}
+        rows={rows}
+        setRows={setRows}
+      />
       <DataTable rows={rows} />
     </div>
   );
