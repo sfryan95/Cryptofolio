@@ -40,6 +40,7 @@ const updatePortfolioData = async (req, res) => {
 const insertPortfolioData = async (req, res) => {};
 const fetchPortfolioData = async (req, res) => {
   const username = req.params.username;
+  console.log(username);
   try {
     const dbQuery = `
       SELECT p.symbol, p.price
@@ -48,7 +49,7 @@ const fetchPortfolioData = async (req, res) => {
       WHERE u.username = $1;
     `;
     const { rows } = await pool.query(dbQuery, [username]);
-    res.json(rows);
+    res.json(rows[0]);
   } catch (error) {
     console.error('Failed to fetch user portfolio', error);
     res.status(500).send('Internal Server Error');

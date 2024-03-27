@@ -4,36 +4,32 @@ import detectPort from 'detect-port';
 import path from 'path';
 import 'dotenv/config';
 import { fileURLToPath } from 'url';
-import homeRoutes from './routes/homeRoutes.js';
-import portfolioRoutes from './routes/portfolioRoutes.js';
+import apitRouter from './routes/apiRouter.js';
 
 const app = express();
 const PORT = 3002;
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 app.use(express.json()); // parses the request body if it is JSON and stores result in req.body
 app.use(express.urlencoded({ extended: true })); // parses data sent by HTML forms
 app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS)
 // app.use(express.static(path.join(__dirname, 'dist'))); // Serve static files from the 'dist' directory
-app.use('/api/home', homeRoutes);
-app.use('/api/portfolio', portfolioRoutes);
+app.use('/api', apitRouter);
+// app.use('/api/portfolio', portfolioRoutes);
 
-// app.use((req, res, next) => {
-//   if (req.path.startsWith('/api')) {
-//     next(); // Pass control to the next middleware if it's an API call
-//   } else {
-//     res.sendFile(path.join(__dirname, 'dist', 'index.html')); // Serve index.html for non-API requests
-//   }
-// });
+app.use((req, res) => res.status(404).send("This is not the page you're looking for...")); // handles requests to unknown routes
 
-// app.use((err, req, res, next) => {
-//   // Error handling middleware
-//   console.error('An error occurred:', err);
-//   res.status(500).json({ message: 'Internal Server Error' });
-// });
-
-app.use('*', (req, res) => res.sendStatus(404)); // handles requests to unknown routes
+app.use((err, req, res, next) => {
+  const defaultErr = {
+    log: 'Express error handler caught unknown middleware error',
+    status: 500,
+    message: { err: 'An error occurred' },
+  };
+  const errorObj = Object.assign({}, defaultErr, err);
+  console.log(errorObj.log);
+  return res.status(errorObj.status).json(errorObj.message);
+});
 
 detectPort(PORT, (err, availablePort) => {
   if (err) {

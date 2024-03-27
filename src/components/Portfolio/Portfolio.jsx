@@ -3,8 +3,6 @@ import PieChart from './PieChart.jsx';
 import CryptoForm from './CryptoForm.jsx';
 import DataTable from './DataTable.jsx';
 import './Portfolio.css';
-import { fakeDataBaseEntry } from '../../utilities/DataTableUtils.js';
-import { updatePortfolio } from '../../services/api.js';
 import CryptoCoin from '../../models/CoinClass.jsx';
 import axios from 'axios';
 
@@ -14,9 +12,7 @@ function Portfolio() {
 
   async function fetchUserPortfolio(username) {
     try {
-      console.log('Username:', username);
-      const response = await axios.get(`http://localhost:3002/api/portfolio/users/seanryan9five`);
-      console.log('Response:', response.data);
+      const response = await axios.get(`http://localhost:3002/api/user-portfolio/${username}`);
       if (response.data.length === 0) {
         console.log('No coins found for this user.');
         return [];
@@ -24,6 +20,31 @@ function Portfolio() {
       return response.data;
     } catch (error) {
       console.error('There was an error fetching the portfolio:', error.message);
+    }
+  }
+
+  async function updatePortfolio(arr) {
+    try {
+      const url = `http://localhost:3002/api/update-portfolio/${arr.map((coin) => coin.symbol).join(',')}`;
+      const response = await axios.get(url);
+      const data = response.data.data;
+      if (data) {
+        arr.forEach((coin) => {
+          const coinData = data[coin.symbol];
+          if (coinData && coinData.name && coinData.id) {
+            coin.id = coinData.id;
+            coin.name = coinData.name;
+          }
+          if (coinData && coinData.quote && coinData.quote.USD) {
+            coin.price = coinData.quote.USD.price;
+            coin.percent_change_24h = coinData.quote.USD.percent_change_24h;
+          }
+        });
+      } else {
+        console.log('No data recieved to update portfolio');
+      }
+    } catch (e) {
+      console.error(`There was an error updating the portfolio:`, e);
     }
   }
 
@@ -41,7 +62,7 @@ function Portfolio() {
         }
       }
       try {
-        const response = await axios.get('http://localhost:3002/api/portfolio');
+        const response = await axios.get('http://localhost:3002/api/autocomplete');
         const coinData = response.data.data;
         if (coinData) {
           const coinsArrLabel = coinData.map((coin) => ({
@@ -61,16 +82,17 @@ function Portfolio() {
 
     async function initAndFetchData() {
       try {
-        const apiData = await fetchUserPortfolio('seanryan9five');
+        const dbData = await fetchUserPortfolio('seanryan9five');
 
-        const coinArr = rows.map((dbItem) => {
-          const apiItem = apiData.find((apiCoin) => apiCoin.symbol === dbItem.symbol);
+        const coinArr = dbData.map((dbItem) => {
+          const apiItem = dbData.find((apiCoin) => apiCoin.symbol === dbItem.symbol);
           if (!apiItem) {
             console.error(`No API data found for symbol: ${dbItem.symbol}`);
             return null;
           }
           return new CryptoCoin(apiItem.id, apiItem.name, dbItem.symbol, dbItem.quantity, apiItem.price, apiItem.percent_change_24h);
         });
+
         await updatePortfolio(coinArr);
         const totalValue = coinArr.reduce((acc, coin) => acc + coin.value, 0);
         coinArr.forEach((coin) => (coin.allocation = coin.value / totalValue));
@@ -81,7 +103,6 @@ function Portfolio() {
     }
     initAndFetchData();
     fetchCoinList();
-    console.log('portfolio component mounted');
   }, []);
 
   return (
