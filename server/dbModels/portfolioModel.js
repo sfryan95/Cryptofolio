@@ -16,6 +16,7 @@ class Portfolio {
       console.error('Error adding portfolio data to portfolioTable:', e);
     }
   }
+  // perfer this method over find by username, it's more efficient
   static async findDataById(userId) {
     try {
       const { rows } = await pool.query('SELECT * FROM portfolio WHERE user_id = $1', [userId]);
@@ -38,20 +39,26 @@ class Portfolio {
     }
   }
   //make a method for updating portfolio information
-  static async updatePortfolioData(username, symbol, quantity) {
+  static async updateQuantity(username, symbol, quantity) {
     try {
       const user = await User.findDataByUsername(username);
       if (!user) {
         console.error('User not found.');
         return null;
       }
-      const { rows } = await pool.query('INSERT INTO portfolio (user_id, symbol, quantity) VALUES ($1, $2, $3) RETURNING *', [user.id, symbol, quantity]);
-      console.log(`Portfolio data added for user ID: ${user.id}, Symbol: ${rows[0].symbol}`);
+      const { rows } = await pool.query('UPDATE portfolio SET quantity = $1 WHERE user_id = $2 AND symbol = $3 RETURNING *', [quantity, user.id, symbol]);
+      if (rows.length === 0) {
+        console.log(`No portolio entry found or updated for : ${user.id}, Symbol: ${symbol}`);
+        return null;
+      }
+      console.log(`Quantity updated for user ID: ${user.id}, Symbol: ${symbol}, New Quantity: ${rows[0].quantity}`);
       return rows[0];
     } catch (e) {
-      console.error('Error adding portfolio data to portfolioTable:', e);
+      console.error('Error updating quantity:', e);
     }
   }
+  //make a method for deleting portfolio information
+  static async deleteCoin(username, symbol) { }
 }
 
 export default Portfolio;

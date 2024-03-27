@@ -17,9 +17,12 @@ const getAutoCompleteCoinList = async (req, res) => {
   }
 };
 
-const getPortfolioData = async (req, res) => {
+const updatePortfolioData = async (req, res) => {
   console.log('portfolio symbol check');
-  const symbols = req.params.symbol;
+  const symbols = req.params.symbols;
+  if (!symbols) {
+    return res.status(400).json({ message: 'No symbols provided' });
+  }
   try {
     const response = await axios.get(`https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=${symbols}`, {
       headers: {
@@ -33,4 +36,25 @@ const getPortfolioData = async (req, res) => {
   }
 };
 
-export { getAutoCompleteCoinList, getPortfolioData };
+const insertPortfolioData = async (req, res) => {}
+const fetchPortfolioData = async (req, res) => {
+  const {username} = req.params;
+  if (!username) {
+    return res.status(400).json({ message: 'No username provided' });
+  }
+  try {
+    const { rows } = await pool.query(
+      `SELECT portfolio.* FROM portfolio 
+      JOIN users ON users.id = portfolio.user_id
+      WHERE users.username = $1`,
+      [username]
+    );
+    res.json(rows.length ? rows : null); // Return the found portfolio data or null
+  } catch (e) {
+    console.error('Error finding portfolio data by username:', e);
+  }
+}
+const updateQuantity = async (req, res) => {}
+const deleteCoin = async (req, res) => {}
+
+export { getAutoCompleteCoinList, updatePortfolioData, fetchPortfolioData };

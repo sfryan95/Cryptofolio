@@ -1,10 +1,10 @@
 import express from 'express';
-import { getAutoCompleteCoinList, getPortfolioData } from '../controllers/portfolioController';
+import { getAutoCompleteCoinList, updatePortfolioData } from '../controllers/portfolioController';
 
 const router = express.Router();
 
 router.get('/', getAutoCompleteCoinList);
 
-router.get('/:symbol', getPortfolioData);
+router.get('/:symbols', updatePortfolioData);
 
 export default router;

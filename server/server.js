@@ -21,21 +21,20 @@ app.use(express.static(path.join(__dirname, 'dist'))); // Serve static files fro
 
 app.use('/api/home', homeRoutes);
 app.use('/api/portfolio', portfolioRoutes);
-app.use('/api/auth', authRoutes);
 
-app.use((req, res, next) => {
-  if (req.path.startsWith('/api')) {
-    next(); // Pass control to the next middleware if it's an API call
-  } else {
-    res.sendFile(path.join(__dirname, 'dist', 'index.html')); // Serve index.html for non-API requests
-  }
-});
+// app.use((req, res, next) => {
+//   if (req.path.startsWith('/api')) {
+//     next(); // Pass control to the next middleware if it's an API call
+//   } else {
+//     res.sendFile(path.join(__dirname, 'dist', 'index.html')); // Serve index.html for non-API requests
+//   }
+// });
 
-app.use((err, req, res, next) => {
-  // Error handling middleware
-  console.error('An error occurred:', err);
-  res.status(500).json({ message: 'Internal Server Error' });
-});
+// app.use((err, req, res, next) => {
+//   // Error handling middleware
+//   console.error('An error occurred:', err);
+//   res.status(500).json({ message: 'Internal Server Error' });
+// });
 
 app.use('*', (req, res) => res.sendStatus(404)); // handles requests to unknown routes
 

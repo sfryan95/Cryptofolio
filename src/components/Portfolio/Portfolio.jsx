@@ -47,6 +47,13 @@ function Portfolio() {
     async function initAndFetchData() {
       try {
         const coinArr = fakeDataBaseEntry.map((item) => new CryptoCoin(item.id, item.name, item.symbol, item.quantity, item.price, item.percent_change_24h, item.allocation));
+        // const coinArr = await axios('http://localhost:3002/api/coins/seanryan9five');
+        // if (coinArr.data) {
+        //   console.log(coinArr.data); // Log to verify data structure
+        //   setRows(coinArr.data); // Adjust according to actual data structure
+        // } else {
+        //   console.log('No data received');
+        // }
         await updatePortfolio(coinArr);
         const totalValue = coinArr.reduce((acc, coin) => acc + coin.value, 0);
         coinArr.forEach((coin) => (coin.allocation = coin.value / totalValue));
