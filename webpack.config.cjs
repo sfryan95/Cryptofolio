@@ -20,17 +20,15 @@ module.exports = {
     }),
   ],
   devServer: {
+    host: 'localhost',
     historyApiFallback: true,
-    hot: false,
+    hot: true,
+    headers: { 'Access-Control-Allow-Origin': '*' },
     proxy: [
       {
-        '/api': {
-          port: 3002,
-          target: 'http://localhost:3002',
-          changeOrigin: false,
-          secure: false,
-          logLevel: 'debug',
-        },
+        context: ['/api'],
+        target: 'http://localhost:3002',
+        secure: false,
       },
     ],
   },
