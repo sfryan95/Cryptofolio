@@ -28,7 +28,7 @@ function Home() {
   }, []);
 
   return (
-    <div className="home-body">
+    <div className="grid-container">
       <GainersAndLosersCards coinList={gainersAndLosers} />
     </div>
   );

@@ -8,29 +8,41 @@
 }
 
 .card:nth-child(-n + 3) {
-  margin-bottom: 100px;
+  margin-bottom: 25px;
 }
 
-.home-body {
+.grid-container {
   margin-top: 150px;
   display: grid;
-  place-items: center;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
 }
 
 .gainersAndLosers {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: auto auto;
-  gap: 50px;
-  padding: 10px;
-  width: 100%;
-  height: 100%;
+  grid-template-columns: 350px;
+  row-gap: 10px;
+}
+
+@media (max-width: 1302px) {
+  .gainersAndLosers {
+    row-gap: 50px;
+  }
+}
+
+@media (min-width: 820px) {
+  .gainersAndLosers {
+    grid-template-columns: repeat(2, minmax(350px, 1fr));
+  }
+}
+@media (min-width: 1302px) {
+  .gainersAndLosers {
+    grid-template-columns: repeat(3, 350px);
+    gap: 100px;
+  }
 }
 
 .home-header {
   width: 100%;
-}
-
-.card {
-  margin: 0 50px;
 }
