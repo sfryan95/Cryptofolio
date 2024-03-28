@@ -22,7 +22,6 @@ export default function ComboBox({ coinList, rows, setRows }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // add fetch new coin data - which involves making a way to fetch a new coin or a create new coin function
     if (selectedCoin !== null) {
       const coinExists = rows.find((row) => row.symbol === selectedCoin.symbol);
       if (!coinExists) {
@@ -40,9 +39,15 @@ export default function ComboBox({ coinList, rows, setRows }) {
             } = coinData;
             const newCoin = new CryptoCoin(id, name, symbol, quantity, price, percent_change_24h);
             setRows((currentRows) => {
-              const totalValue = currentRows.reduce((acc, coin) => acc + coin.value, 0) + newCoin.value;
-              newCoin.allocation = newCoin.value / totalValue;
-              return [...currentRows, newCoin];
+              const updatedTotalValue = currentRows.reduce((acc, coin) => acc + coin.value, 0) + newCoin.value;
+
+              const updatedRows = currentRows.map((coin) => ({
+                ...coin,
+                value: coin.price * coin.quantity,
+                allocation: coin.value / updatedTotalValue,
+              }));
+              newCoin.allocation = newCoin.value / updatedTotalValue;
+              return [...updatedRows, newCoin];
             });
           } else {
             console.log('No data recieved for coin list.');
@@ -50,6 +55,32 @@ export default function ComboBox({ coinList, rows, setRows }) {
         } catch (e) {
           console.error('There was an error updating price for coin list', e);
         }
+      } else {
+        setRows((currentRows) => {
+          const index = currentRows.findIndex((row) => row.symbol === selectedCoin.symbol);
+
+          if (index !== -1) {
+            const coinToUpdate = { ...currentRows[index] };
+            const updatedQuantity = Number(coinToUpdate.quantity) + Number(quantity);
+            const { id, name, symbol, price, percent_change_24h } = coinToUpdate;
+            const newCoin = new CryptoCoin(id, name, symbol, updatedQuantity, price, percent_change_24h);
+            const updatedRows = currentRows.map((coin, i) => {
+              if (i === index) {
+                return newCoin;
+              } else {
+                return coin;
+              }
+            });
+            const updatedTotalValue = updatedRows.reduce((acc, coin) => acc + Number(coin.value), 0);
+            const finalRows = updatedRows.map((coin) => ({
+              ...coin,
+              value: coin.price * coin.quantity,
+              allocation: coin.value / updatedTotalValue,
+            }));
+            return finalRows;
+          }
+          return currentRows;
+        });
       }
     }
     setSelectedCoin(null);

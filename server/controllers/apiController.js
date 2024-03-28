@@ -36,9 +36,8 @@ apiController.fetchAutoCompleteCoinList = async (req, res) => {
 };
 
 apiController.fetchUserPortfolioData = async (req, res) => {
-  console.log(req.params);
   const username = req.params.username;
-  console.log(username);
+  console.log(`fetched user portfolio for: ${username}`);
   try {
     const dbQuery = `
       SELECT p.symbol, p.quantity
