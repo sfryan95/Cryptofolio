@@ -3,10 +3,12 @@ import userController from '../controllers/userController.js';
 
 const router = express.Router();
 
+router.get('/portfolio', userController.authenticateToken, userController.fetchUserPortfolioData);
+
 router.post('/signup', userController.insertUser);
 
 router.post('/insert-coin', userController.authenticateToken, userController.insertCoin);
 
-router.get('/portfolio', userController.authenticateToken, userController.fetchUserPortfolioData);
+router.patch('/update-quantity', userController.authenticateToken, userController.updateQuantity);
 
 export default router;

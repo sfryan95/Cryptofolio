@@ -87,4 +87,26 @@ userController.insertCoin = async (req, res, next) => {
   }
 };
 
+userController.updateQuantity = async (req, res, next) => {
+  const userId = req.user.id;
+  const { symbol, quantity } = req.body;
+  console.log('symbol', symbol);
+  console.log('quantity', quantity);
+  try {
+    if (!userId) {
+      console.error('User not found.');
+      return res.status(404).send('User not found.');
+    }
+    const { rows } = await pool.query('UPDATE portfolio SET quantity = $1 WHERE user_id = $2 AND symbol = $3 RETURNING *', [quantity, userId, symbol]);
+    if (rows.length === 0) {
+      return res.status(404).send(`No portolio entry found or updated for : ${userId}, Symbol: ${symbol}`);
+    }
+    console.log(`Quantity updated for user ID: ${rows[0].userId}, Symbol: ${rows[0].symbol}, New Quantity: ${rows[0].quantity}`);
+    return res.status(200).send('Quantity successfully updated.');
+  } catch (e) {
+    console.error('Error updating quantity:', e);
+    return res.status(500).send('Error updating quantity');
+  }
+};
+
 export default userController;

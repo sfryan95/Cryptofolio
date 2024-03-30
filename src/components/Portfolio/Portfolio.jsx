@@ -11,8 +11,16 @@ function Portfolio() {
   const [coinList, setCoinList] = useState([]);
 
   async function fetchUserPortfolio() {
+    const token = localStorage.getItem('token');
+    const url = 'http://localhost:3002/user/portfolio/';
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    };
     try {
-      const response = await axios.get(`http://localhost:3002/user/portfolio/`);
+      const response = await axios.get(url, config);
       if (response.data.length === 0) {
         console.log('No coins found for this user.');
         return [];

@@ -30,7 +30,6 @@ export default function ComboBox({ coinList, rows, setRows }) {
           const coinData = data.data[selectedCoin.symbol];
           if (coinData) {
             const token = localStorage.getItem('token');
-            console.log(token);
             const url = 'http://localhost:3002/user/insert-coin/';
             const data = {
               symbol: selectedCoin.symbol,
@@ -105,9 +104,6 @@ export default function ComboBox({ coinList, rows, setRows }) {
     setSelectedCoin(null);
     setQuantity('');
   };
-  // create new coin
-  // add update row state
-  // later send to database
 
   return (
     <form onSubmit={handleSubmit} className="combo-box">
