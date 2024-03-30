@@ -74,12 +74,33 @@ export default function ComboBox({ coinList, rows, setRows }) {
           console.error('There was an error updating price for coin list', e);
         }
       } else {
+        const index = rows.findIndex((row) => row.symbol === selectedCoin.symbol);
+        const coinToUpdate = { ...rows[index] };
+        const updatedQuantity = Number(coinToUpdate.quantity) + Number(quantity);
+        const token = localStorage.getItem('token');
+        const url = 'http://localhost:3002/user/update-quantity';
+        const data = {
+          symbol: selectedCoin.symbol,
+          quantity: updatedQuantity,
+        };
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        };
+        try {
+          const response = await axios.patch(url, data, config);
+          console.log('Response:', response.data);
+        } catch (e) {
+          console.error('Error:', e);
+        }
         setRows((currentRows) => {
           const index = currentRows.findIndex((row) => row.symbol === selectedCoin.symbol);
 
           if (index !== -1) {
-            const coinToUpdate = { ...currentRows[index] };
-            const updatedQuantity = Number(coinToUpdate.quantity) + Number(quantity);
+            // const coinToUpdate = { ...currentRows[index] };
+            // const updatedQuantity = Number(coinToUpdate.quantity) + Number(quantity);
             const { id, name, symbol, price, percent_change_24h } = coinToUpdate;
             const newCoin = new CryptoCoin(id, name, symbol, updatedQuantity, price, percent_change_24h);
             const updatedRows = currentRows.map((coin, i) => {
