@@ -33,7 +33,48 @@ userController.insertUser = async (req, res, next) => {
     return next({
       log: `An error occured in userController.insertUser: ${e}`,
       status: errorStatus,
-      message: { error: errorMessage },
+      message: { error: 'errorMessage' },
+    });
+  }
+};
+
+userController.findUserByEmail = async (req, res, next) => {
+  const { email } = req.body;
+  try {
+    const response = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    const user = response.rows[0];
+    if (!user) {
+      return res.status(401).json({ message: 'Incorrect email or password.' });
+    }
+    req.user = {
+      id: user.id,
+      password: user.password,
+    };
+    return next();
+  } catch (e) {
+    return next({
+      log: `An error occured in userController.findUserByEmail: ${e}`,
+      status: 401,
+      message: { error: 'An unexpected errcdor occurred.' },
+    });
+  }
+};
+
+userController.verifyUser = async (req, res, next) => {
+  const { password } = req.body;
+  const user = req.user;
+  try {
+    if (await bcrypt.compare(password, user.password)) {
+      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+      res.status(200).json({ token });
+    } else {
+      return res.status(401).json({ message: 'Authentication failed' });
+    }
+  } catch (e) {
+    return next({
+      log: `An error occured in userController.verifyUser: ${e}`,
+      status: 401,
+      message: { error: 'An unexpected error occurred.' },
     });
   }
 };
@@ -76,8 +117,7 @@ userController.insertCoin = async (req, res, next) => {
   console.log('quantity', quantity);
   try {
     if (!userId) {
-      console.error('User not found.');
-      return null;
+      return res.status(404).json({ message: 'Unable to save coin in the database.' });
     }
     const { rows } = await pool.query('INSERT INTO portfolio (user_id, symbol, quantity) VALUES ($1, $2, $3) RETURNING *', [userId, symbol, quantity]);
     console.log(`Portfolio data added for user ID: ${userId}, Symbol: ${rows[0].symbol}`);

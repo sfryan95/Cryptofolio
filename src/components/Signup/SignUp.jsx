@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -27,14 +27,16 @@ function Copyright(props) {
   );
 }
 
-export default function SignUp() {
+export default function SignUp({ setIsAuthenticated }) {
+  const navigate = useNavigate();
   const signupAndRedirect = async (email, password) => {
     try {
       const response = await axios.post('/user/signup', { email, password });
       if (response.status === 201) {
         const { token } = response.data;
         localStorage.setItem('token', token);
-        window.location.href = '/';
+        setIsAuthenticated(true);
+        navigate('/');
       } else {
         console.error('Unexpected status code received:', response.status);
       }
@@ -50,10 +52,8 @@ export default function SignUp() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-
     const email = data.get('email');
     const password = data.get('password');
-
     signupAndRedirect(email, password);
   };
 

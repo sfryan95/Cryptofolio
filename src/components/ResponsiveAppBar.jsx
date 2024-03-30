@@ -15,7 +15,7 @@ import CustomLogo from '../images/logo.png';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './ResponsiveAppBar.css';
 
-function ResponsiveAppBar({ isAuthenticated, setIsAuthenticated }) {
+function ResponsiveAppBar({ isAuthenticated }) {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 

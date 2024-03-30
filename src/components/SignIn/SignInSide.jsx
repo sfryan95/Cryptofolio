@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,6 +12,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
+import axios from 'axios';
 
 function Copyright(props) {
   return (
@@ -26,14 +27,33 @@ function Copyright(props) {
   );
 }
 
-export default function SignInSide() {
+export default function SignInSide({ setIsAuthenticated }) {
+  const navigate = useNavigate();
+  const loginAndRedirect = async (email, password) => {
+    console.log('here');
+    try {
+      const response = await axios.post('/user/login', { email, password });
+      if (response.status === 200) {
+        setIsAuthenticated(true);
+        navigate('/');
+      } else {
+        console.error('Unexpected status code received:', response.status);
+      }
+    } catch (e) {
+      console.error('Error during signup:', e.message);
+      if (e.response) {
+        console.error('Response data:', e.response.data);
+        console.error('Response status:', e.response.status);
+      }
+    }
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const email = data.get('email');
+    const password = data.get('password');
+    loginAndRedirect(email, password);
   };
 
   return (

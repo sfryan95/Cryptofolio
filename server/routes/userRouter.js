@@ -7,6 +7,10 @@ router.get('/portfolio', userController.authenticateToken, userController.fetchU
 
 router.post('/signup', userController.insertUser);
 
+router.post('/login', userController.findUserByEmail, userController.verifyUser, (req, res) => {
+  res.status(200);
+});
+
 router.post('/insert-coin', userController.authenticateToken, userController.insertCoin);
 
 router.patch('/update-quantity', userController.authenticateToken, userController.updateQuantity);

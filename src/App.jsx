@@ -27,13 +27,13 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className="portfolio-header">
-          <ResponsiveAppBar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />
+          <ResponsiveAppBar isAuthenticated={isAuthenticated} />
         </div>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/portfolio" element={<Portfolio />} />
-          <Route path="/login" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<SignIn setIsAuthenticated={setIsAuthenticated} />} />
+          <Route path="/signup" element={<SignUp setIsAuthenticated={setIsAuthenticated} />} />
         </Routes>
       </ThemeProvider>
     </BrowserRouter>
