@@ -4,7 +4,8 @@ import detectPort from 'detect-port';
 import path from 'path';
 import 'dotenv/config';
 import { fileURLToPath } from 'url';
-import apitRouter from './routes/apiRouter.js';
+import apiRouter from './routes/apiRouter.js';
+import userRouter from './routes/userRouter.js';
 
 const app = express();
 const PORT = 3002;
@@ -15,8 +16,8 @@ app.use(express.json()); // parses the request body if it is JSON and stores res
 app.use(express.urlencoded({ extended: true })); // parses data sent by HTML forms
 app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS)
 // app.use(express.static(path.join(__dirname, 'dist'))); // Serve static files from the 'dist' directory
-app.use('/api', apitRouter);
-// app.use('/api/portfolio', portfolioRoutes);
+app.use('/api', apiRouter);
+app.use('/user', userRouter);
 
 app.use((req, res) => res.status(404).send("This is not the page you're looking for...")); // handles requests to unknown routes
 
@@ -26,7 +27,7 @@ app.use((err, req, res, next) => {
     status: 500,
     message: { err: 'An error occurred' },
   };
-  const errorObj = Object.assign({}, defaultErr, err);
+  const errorObj = { ...defaultErr, ...err };
   console.log(errorObj.log);
   return res.status(errorObj.status).json(errorObj.message);
 });

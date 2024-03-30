@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -12,6 +12,7 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import axios from 'axios';
 
 function Copyright(props) {
   return (
@@ -27,13 +28,33 @@ function Copyright(props) {
 }
 
 export default function SignUp() {
+  const signupAndRedirect = async (email, password) => {
+    try {
+      const response = await axios.post('/user/signup', { email, password });
+      if (response.status === 201) {
+        const { token } = response.data;
+        localStorage.setItem('token', token);
+        window.location.href = '/';
+      } else {
+        console.error('Unexpected status code received:', response.status);
+      }
+    } catch (e) {
+      console.error('Error during signup:', e.message);
+      if (e.response) {
+        console.error('Response data:', e.response.data);
+        console.error('Response status:', e.response.status);
+      }
+    }
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+
+    const email = data.get('email');
+    const password = data.get('password');
+
+    signupAndRedirect(email, password);
   };
 
   return (

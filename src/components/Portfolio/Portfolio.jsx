@@ -10,9 +10,9 @@ function Portfolio() {
   const [rows, setRows] = useState([]);
   const [coinList, setCoinList] = useState([]);
 
-  async function fetchUserPortfolio(username) {
+  async function fetchUserPortfolio() {
     try {
-      const response = await axios.get(`http://localhost:3002/api/user-portfolio/${username}`);
+      const response = await axios.get(`http://localhost:3002/user/portfolio/`);
       if (response.data.length === 0) {
         console.log('No coins found for this user.');
         return [];
@@ -82,7 +82,7 @@ function Portfolio() {
 
     async function initAndFetchData() {
       try {
-        const dbData = await fetchUserPortfolio('seanryan9five');
+        const dbData = await fetchUserPortfolio();
 
         const coinArr = dbData.map((dbItem) => {
           const apiItem = dbData.find((apiCoin) => apiCoin.symbol === dbItem.symbol);
@@ -108,11 +108,7 @@ function Portfolio() {
   return (
     <div className="portfolio-body">
       <PieChart rows={rows} />
-      <CryptoForm
-        coinList={coinList}
-        rows={rows}
-        setRows={setRows}
-      />
+      <CryptoForm coinList={coinList} rows={rows} setRows={setRows} />
       <DataTable rows={rows} />
     </div>
   );

@@ -23,7 +23,7 @@ apiController.fetchGainersAndLosers = async (req, res) => {
 apiController.fetchAutoCompleteCoinList = async (req, res) => {
   console.log('autocomplete check');
   try {
-    const response = await axios.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?start=1&limit=500&sort=market_cap&cryptocurrency_type=all&tag=all', {
+    const response = await axios.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?start=1&limit=1000&sort=market_cap&cryptocurrency_type=all&tag=all', {
       headers: {
         'X-CMC_PRO_API_KEY': API_Key,
       },
@@ -35,7 +35,7 @@ apiController.fetchAutoCompleteCoinList = async (req, res) => {
   }
 };
 
-apiController.fetchUserPortfolioData = async (req, res) => {
+/* apiController.fetchUserPortfolioData = async (req, res) => {
   const username = req.params.username;
   console.log(`fetched user portfolio for: ${username}`);
   try {
@@ -43,7 +43,7 @@ apiController.fetchUserPortfolioData = async (req, res) => {
       SELECT p.symbol, p.quantity
       FROM portfolio p
       JOIN users u ON p.user_id = u.id
-      WHERE u.username = $1;
+      WHERE u.email = $1;
     `;
     const { rows } = await pool.query(dbQuery, [username]);
     res.json(rows);
@@ -51,7 +51,7 @@ apiController.fetchUserPortfolioData = async (req, res) => {
     console.error('Failed to fetch user portfolio', error);
     res.status(500).send('Internal Server Error');
   }
-};
+}; */
 
 apiController.fetchCoinDataBySymbols = async (req, res) => {
   console.log('portfolio update symbol check');

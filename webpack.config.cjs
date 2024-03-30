@@ -30,6 +30,11 @@ module.exports = {
         target: 'http://localhost:3002',
         secure: false,
       },
+      {
+        context: ['/user'],
+        target: 'http://localhost:3002',
+        secure: false,
+      },
     ],
   },
   module: {

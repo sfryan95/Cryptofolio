@@ -29,6 +29,25 @@ export default function ComboBox({ coinList, rows, setRows }) {
           const { data } = await axios.get(`http://localhost:3002/api/fetch-coin/${selectedCoin.symbol}`);
           const coinData = data.data[selectedCoin.symbol];
           if (coinData) {
+            const token = localStorage.getItem('token');
+            console.log(token);
+            const url = 'http://localhost:3002/user/insert-coin/';
+            const data = {
+              symbol: selectedCoin.symbol,
+              quantity: quantity,
+            };
+            const config = {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+              },
+            };
+            try {
+              const response = await axios.post(url, data, config);
+              console.log('Response:', response.data);
+            } catch (e) {
+              console.error('Error:', e);
+            }
             const {
               id,
               name,
@@ -91,9 +110,7 @@ export default function ComboBox({ coinList, rows, setRows }) {
   // later send to database
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="combo-box">
+    <form onSubmit={handleSubmit} className="combo-box">
       <Autocomplete
         onChange={handleAutocompleteChange}
         className="form-component"
@@ -103,29 +120,11 @@ export default function ComboBox({ coinList, rows, setRows }) {
         getOptionLabel={(option) => option.label || ''}
         sx={{ width: 300 }}
         value={selectedCoin}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="Coin"
-            name="symbol"
-          />
-        )}
+        renderInput={(params) => <TextField {...params} label="Coin" name="symbol" />}
         isOptionEqualToValue={(option, value) => option.symbol === value.symbol}
       />
-      <TextField
-        onChange={handleQuantityChange}
-        className="form-component"
-        type="number"
-        id="outlined-helperText"
-        label="Quantity"
-        name="quantity"
-        value={quantity}
-      />
-      <Button
-        variant="outlined"
-        id="submit"
-        type="submit"
-        value="submit">
+      <TextField onChange={handleQuantityChange} className="form-component" type="number" id="outlined-helperText" label="Quantity" name="quantity" value={quantity} />
+      <Button variant="outlined" id="submit" type="submit" value="submit">
         Submit
       </Button>
     </form>
