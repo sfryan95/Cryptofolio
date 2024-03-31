@@ -27,7 +27,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className="portfolio-header">
-          <ResponsiveAppBar isAuthenticated={isAuthenticated} />
+          <ResponsiveAppBar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />
         </div>
         <Routes>
           <Route path="/" element={<Home />} />

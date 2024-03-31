@@ -15,13 +15,13 @@ import CustomLogo from '../images/logo.png';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './ResponsiveAppBar.css';
 
-function ResponsiveAppBar({ isAuthenticated }) {
+function ResponsiveAppBar({ isAuthenticated, setIsAuthenticated }) {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 
   const pages = ['Home', 'Portfolio'];
   const loginAndSignUpPages = ['Login', 'SignUp'];
-  const menuPages = !isAuthenticated ? ['Home', 'Portfolio', 'Login', 'SignUp'] : ['Home', 'Portfolio'];
+  const menuPages = !isAuthenticated ? ['Home', 'Portfolio', 'Login', 'SignUp'] : ['Home'];
   const settings = ['Favorites', 'Logout'];
 
   const handleOpenNavMenu = (event) => {
@@ -57,8 +57,7 @@ function ResponsiveAppBar({ isAuthenticated }) {
           <Typography
             variant="h6"
             noWrap
-            component="a"
-            href="#"
+            component="div"
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -107,8 +106,7 @@ function ResponsiveAppBar({ isAuthenticated }) {
           <Typography
             variant="h5"
             noWrap
-            component="a"
-            href="#"
+            component="div"
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'none' },
@@ -171,7 +169,19 @@ function ResponsiveAppBar({ isAuthenticated }) {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}>
                 {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                  <MenuItem
+                    key={setting}
+                    onClick={() => {
+                      if (setting === 'Logout') {
+                        localStorage.removeItem('token');
+                        handleCloseNavMenu();
+                        setIsAuthenticated(false);
+                        navigate('/login');
+                      } else {
+                        handleCloseNavMenu();
+                        handleNavigate(page);
+                      }
+                    }}>
                     <Typography textAlign="center">{setting}</Typography>
                   </MenuItem>
                 ))}
