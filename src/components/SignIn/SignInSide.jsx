@@ -1,5 +1,6 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import Alert from '@mui/material/Alert';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,6 +13,9 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
+import Collapse from '@mui/material/Collapse';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 
 function Copyright(props) {
@@ -27,7 +31,9 @@ function Copyright(props) {
   );
 }
 
-export default function SignInSide({ setIsAuthenticated }) {
+export default function SignInSide({ setIsAuthenticated, setLoginSuccess, setLoginSuccessOpen }) {
+  const [failedOpen, setLoginFailedOpen] = useState(false);
+  const [loginFailed, setLoginFailed] = useState(false);
   const navigate = useNavigate();
   const loginAndRedirect = async (email, password) => {
     console.log('here');
@@ -37,13 +43,15 @@ export default function SignInSide({ setIsAuthenticated }) {
         const { token } = response.data;
         localStorage.setItem('token', token);
         setIsAuthenticated(true);
+        setLoginSuccess(true);
+        setLoginSuccessOpen(true);
         navigate('/');
-      } else {
-        console.error('Unexpected status code received:', response.status);
       }
     } catch (e) {
       console.error('Error during signup:', e.message);
       if (e.response) {
+        setLoginFailed(true);
+        setLoginFailedOpen(true);
         console.error('Response data:', e.response.data);
         console.error('Response status:', e.response.status);
       }
@@ -83,6 +91,27 @@ export default function SignInSide({ setIsAuthenticated }) {
             flexDirection: 'column',
             alignItems: 'center',
           }}>
+          <Box sx={{ width: '100%' }}>
+            <Collapse in={failedOpen}>
+              <Alert
+                variant="filled"
+                severity="error"
+                action={
+                  <IconButton
+                    aria-label="close"
+                    color="inherit"
+                    size="small"
+                    onClick={() => {
+                      setLoginFailedOpen(false);
+                    }}>
+                    <CloseIcon fontSize="inherit" />
+                  </IconButton>
+                }
+                sx={{ mb: 2 }}>
+                Incorrect email or password.
+              </Alert>
+            </Collapse>
+          </Box>
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar>

@@ -1,8 +1,13 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import GainersAndLosersCards from './Gainers.jsx';
 import fetchGainersAndLosers from '../../utilities/HomeUtils.js';
+import Box from '@mui/material/Box';
+import Collapse from '@mui/material/Collapse';
+import Alert from '@mui/material/Alert';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 
-function Home() {
+function Home({ successOpen, setLoginSuccessOpen }) {
   const [gainersAndLosers, setGainersAndLosers] = useState([]);
   useEffect(() => {
     const fetchAndSetGainersAndLosers = async () => {
@@ -29,6 +34,27 @@ function Home() {
 
   return (
     <div className="grid-container">
+      <Box sx={{ width: '100%', marginBottom: '50px' }}>
+        <Collapse in={successOpen}>
+          <Alert
+            variant="filled"
+            severity="success"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setLoginSuccessOpen(false);
+                }}>
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            sx={{ mb: 2 }}>
+            Login success!
+          </Alert>
+        </Collapse>
+      </Box>
       <GainersAndLosersCards coinList={gainersAndLosers} />
     </div>
   );

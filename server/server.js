@@ -19,7 +19,7 @@ app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS)
 app.use('/api', apiRouter);
 app.use('/user', userRouter);
 
-app.use((req, res) => res.status(404).send("This is not the page you're looking for...")); // handles requests to unknown routes
+app.use((req, res) => res.status(404).send("This is not the page you're looking for..."));
 
 app.use((err, req, res, next) => {
   const defaultErr = {

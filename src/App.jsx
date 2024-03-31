@@ -12,6 +12,8 @@ import SignUp from './components/Signup/SignUp.jsx';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [successOpen, setLoginSuccessOpen] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const theme = React.useMemo(
     () =>
@@ -30,9 +32,9 @@ function App() {
           <ResponsiveAppBar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />
         </div>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home successOpen={successOpen} setLoginSuccessOpen={setLoginSuccessOpen} />} />
           <Route path="/portfolio" element={<Portfolio />} />
-          <Route path="/login" element={<SignIn setIsAuthenticated={setIsAuthenticated} />} />
+          <Route path="/login" element={<SignIn setIsAuthenticated={setIsAuthenticated} setLoginSuccess={setLoginSuccess} setLoginSuccessOpen={setLoginSuccessOpen} />} />
           <Route path="/signup" element={<SignUp setIsAuthenticated={setIsAuthenticated} />} />
         </Routes>
       </ThemeProvider>

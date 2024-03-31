@@ -5,6 +5,8 @@ import 'dotenv/config';
 
 const userController = {};
 
+// expected input - email and password on req.body
+// expected output - JWT and/or response status/message
 userController.insertUser = async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
@@ -24,8 +26,7 @@ userController.insertUser = async (req, res, next) => {
     return next();
   } catch (e) {
     let errorStatus = 500;
-    let errorMessage = 'An unexpected error occurred.';
-
+    let errorMessage = 'An unexpected error occurred. Please try again!';
     if (e.code === '23505') {
       errorStatus = 409;
       errorMessage = 'Email already exists.';
@@ -33,23 +34,31 @@ userController.insertUser = async (req, res, next) => {
     return next({
       log: `An error occured in userController.insertUser: ${e}`,
       status: errorStatus,
-      message: { error: 'errorMessage' },
+      message: { error: errorMessage },
     });
   }
 };
 
+// expected input - email on req.body
+// expected output - user saved to req.user and/or response status/message
 userController.findUserByEmail = async (req, res, next) => {
   const { email } = req.body;
   try {
     const response = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     const user = response.rows[0];
     if (!user) {
-      return res.status(401).json({ message: 'Incorrect email or password.' });
+      return res.status(401).json({ error: 'Incorrect email or password.' });
     }
-    req.user = {
-      id: user.id,
-      password: user.password,
-    };
+    if (req.method === 'POST') {
+      req.user = {
+        id: user.id,
+        password: user.password,
+      };
+    } else if (req.method === 'DELETE') {
+      req.user = {
+        id: user.id,
+      };
+    }
     return next();
   } catch (e) {
     return next({
@@ -60,6 +69,8 @@ userController.findUserByEmail = async (req, res, next) => {
   }
 };
 
+// expected input - password on req.body; user on req.user
+// expected output - JWT and/or response status/message
 userController.verifyUser = async (req, res, next) => {
   const { password } = req.body;
   const user = req.user;
@@ -68,7 +79,7 @@ userController.verifyUser = async (req, res, next) => {
       const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '24h' });
       res.status(200).json({ token });
     } else {
-      return res.status(401).json({ message: 'Authentication failed' });
+      return res.status(401).json({ error: 'Authentication failed' });
     }
   } catch (e) {
     return next({
@@ -79,6 +90,8 @@ userController.verifyUser = async (req, res, next) => {
   }
 };
 
+// expected input - userId on req.user
+// expected output - portfolio data from db and/or response status/message
 userController.fetchUserPortfolioData = async (req, res) => {
   const userId = req.user.id;
   console.log(`fetched user portfolio for: ${userId}`);
@@ -92,23 +105,30 @@ userController.fetchUserPortfolioData = async (req, res) => {
     const { rows } = await pool.query(dbQuery, [userId]);
     res.json(rows);
   } catch (error) {
-    console.error('Failed to fetch user portfolio', error);
-    res.status(500).send('Internal Server Error');
+    return next({
+      log: `An error occured in userController.fetchUserPortfolioData: ${e}`,
+      status: 500,
+      message: { error: 'An unexpected errcdor occurred.' },
+    });
   }
 };
 
+// expected input - token from req.headers
+// expected output - forbidden/unauthorized response status/message or moves on to next middleware
 userController.authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
-  if (token === null) return res.sendStatus(401);
+  if (token === null) return res.status(401).json({ error: 'Unauthorized' });
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403);
+    if (err) return res.status(403).json({ error: 'Forbidden' });
     req.user = user;
     next();
   });
 };
 
+// expected input - userId on req.user; symbol and quantity on req.body
+// expected output - response status/message
 userController.insertCoin = async (req, res, next) => {
   const userId = req.user.id;
   const { symbol, quantity } = req.body;
@@ -116,7 +136,7 @@ userController.insertCoin = async (req, res, next) => {
   console.log('quantity', quantity);
   try {
     if (!userId) {
-      return res.status(404).json({ message: 'Unable to save coin in the database.' });
+      return res.status(404).json({ error: 'Unable to save coin in the database.' });
     }
     const { rows } = await pool.query('INSERT INTO portfolio (user_id, symbol, quantity) VALUES ($1, $2, $3) RETURNING *', [userId, symbol, quantity]);
     console.log(`Portfolio data added for user ID: ${userId}, Symbol: ${rows[0].symbol}`);
@@ -126,6 +146,8 @@ userController.insertCoin = async (req, res, next) => {
   }
 };
 
+// expected input - userId on req.user; symbol and quantity on req.body
+// expected output - quantity of coin changed in db and/or status/message
 userController.updateQuantity = async (req, res, next) => {
   const userId = req.user.id;
   const { symbol, quantity } = req.body;
@@ -134,7 +156,7 @@ userController.updateQuantity = async (req, res, next) => {
   try {
     if (!userId) {
       console.error('User not found.');
-      return res.status(404).send('User not found.');
+      return res.status(404).json({ error: 'User not found.' });
     }
     const { rows } = await pool.query('UPDATE portfolio SET quantity = $1 WHERE user_id = $2 AND symbol = $3 RETURNING *', [quantity, userId, symbol]);
     if (rows.length === 0) {
@@ -145,6 +167,26 @@ userController.updateQuantity = async (req, res, next) => {
   } catch (e) {
     console.error('Error updating quantity:', e);
     return res.status(500).send('Error updating quantity');
+  }
+};
+
+// expected input - userId on req.user
+// expected output - user deleted in db which will trigger deletion of user's portfolio data in portfolio table and/or status/message
+userController.deleteUserById = async (req, res, next) => {
+  const userId = req.user.id;
+  try {
+    const deleteResult = await pool.query('DELETE FROM users WHERE id = $1', [userId]);
+    if (deleteResult.rowCount > 0) {
+      return res.status(204).send(); // or res.status(200).json({ message: 'User successfully deleted' });
+    } else {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+  } catch (e) {
+    return next({
+      log: `An error occured in userController.deleteUserById: ${e}`,
+      status: 500,
+      message: { error: 'Error deleting user by id.' },
+    });
   }
 };
 

@@ -276,7 +276,7 @@ export default function EnhancedTable({ rows }) {
                       {row.name}
                     </TableCell>
                     <TableCell align="right">{row.symbol}</TableCell>
-                    <TableCell align="right">{row.quantity}</TableCell>
+                    <TableCell align="right">{Number(row.quantity).toFixed(4)}</TableCell>
                     <TableCell align="right">{cash(row.price)}</TableCell>
                     <TableCell align="right" sx={{ color: row.percent_change_24h / 100 > 0 ? 'lime' : 'red' }}>
                       {percent(row.percent_change_24h / 100)}
