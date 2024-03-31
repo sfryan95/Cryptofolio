@@ -34,7 +34,7 @@ function Home({ successOpen, setLoginSuccessOpen }) {
 
   return (
     <div className="grid-container">
-      <Box sx={{ width: '100%', marginBottom: '50px' }}>
+      <Box sx={{ width: '50%', marginBottom: '50px' }}>
         <Collapse in={successOpen}>
           <Alert
             variant="filled"
