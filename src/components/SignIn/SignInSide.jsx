@@ -34,6 +34,8 @@ export default function SignInSide({ setIsAuthenticated }) {
     try {
       const response = await axios.post('/user/login', { email, password });
       if (response.status === 200) {
+        const { token } = response.data;
+        localStorage.setItem('token', token);
         setIsAuthenticated(true);
         navigate('/');
       } else {

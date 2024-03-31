@@ -19,9 +19,9 @@ function ResponsiveAppBar({ isAuthenticated, setIsAuthenticated }) {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 
-  const pages = ['Home', 'Portfolio'];
+  const pages = !isAuthenticated ? ['Home'] : ['Home', 'Portfolio'];
   const loginAndSignUpPages = ['Login', 'SignUp'];
-  const menuPages = !isAuthenticated ? ['Home', 'Portfolio', 'Login', 'SignUp'] : ['Home'];
+  const menuPages = !isAuthenticated ? ['Home', 'Login', 'SignUp'] : ['Home', 'Portfolio', 'Favorites', 'Logout'];
   const settings = ['Favorites', 'Logout'];
 
   const handleOpenNavMenu = (event) => {
