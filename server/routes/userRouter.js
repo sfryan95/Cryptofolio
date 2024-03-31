@@ -15,6 +15,10 @@ router.post('/insert-coin', userController.authenticateToken, userController.ins
 
 router.patch('/update-quantity', userController.authenticateToken, userController.updateQuantity);
 
+router.patch('/update-email', userController.authenticateToken, userController.updateEmail);
+
+router.patch('/update-password', userController.authenticateToken, userController.updatePassword);
+
 router.delete('/', userController.findUserByEmail, userController.deleteUserById);
 
 export default router;

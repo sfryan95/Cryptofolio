@@ -170,6 +170,51 @@ userController.updateQuantity = async (req, res, next) => {
   }
 };
 
+// expected input - userId on req.user; email on req.body
+// expected output - email of user changed in db and/or status/message
+userController.updateEmail = async (req, res, next) => {
+  const userId = req.user.id;
+  const { email } = req.body;
+  try {
+    if (!userId) {
+      console.error('User not found.');
+      return res.status(404).json({ error: 'User not found.' });
+    }
+    const { rows } = await pool.query('UPDATE users SET email = $1 WHERE id = $2 RETURNING id, email', [email, userId]);
+    if (rows.length === 0) {
+      return res.status(404).json({ message: `No user email found or updated for : ${userId}, Email: ${email}` });
+    }
+    console.log(`Email updated for user ID: ${rows[0].id}, Email: ${rows[0].email}`);
+    return res.status(200).json({ message: 'Email successfully updated.', email: rows[0].email });
+  } catch (e) {
+    console.error('Error updating user:', e);
+    return res.status(500).json({ error: 'Error updating email.' });
+  }
+};
+
+// expected input - userId on req.user; password on req.body
+// expected output - password of user changed in db and/or status/message
+userController.updatePassword = async (req, res, next) => {
+  const userId = req.user.id;
+  const { password } = req.body;
+  try {
+    if (!userId) {
+      console.error('User not found.');
+      return res.status(404).json({ error: 'User not found.' });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const { rows } = await pool.query('UPDATE users SET password = $1 WHERE id = $2 RETURNING id', [hashedPassword, userId]);
+    if (rows.length === 0) {
+      return res.status(404).json({ message: `No user password found or updated for : ${userId}` });
+    }
+    console.log(`Password updated for user ID: ${rows[0].id}`);
+    return res.status(200).json({ message: 'Password successfully updated.' });
+  } catch (e) {
+    console.error('Error updating user:', e);
+    return res.status(500).json({ error: 'Error updating password.' });
+  }
+};
+
 // expected input - userId on req.user
 // expected output - user deleted in db which will trigger deletion of user's portfolio data in portfolio table and/or status/message
 userController.deleteUserById = async (req, res, next) => {

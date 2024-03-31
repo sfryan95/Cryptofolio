@@ -9,6 +9,7 @@ import Portfolio from './components/Portfolio/Portfolio.jsx';
 import ResponsiveAppBar from './components/ResponsiveAppBar.jsx';
 import SignIn from './components/SignIn/SignInSide.jsx';
 import SignUp from './components/Signup/SignUp.jsx';
+import Dashboard from './components/Dashboard/Dashboard.jsx';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -29,13 +30,14 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className="portfolio-header">
-          <ResponsiveAppBar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />
+          <ResponsiveAppBar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} setLoginSuccessOpen={setLoginSuccessOpen} />
         </div>
         <Routes>
           <Route path="/" element={<Home successOpen={successOpen} setLoginSuccessOpen={setLoginSuccessOpen} />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/login" element={<SignIn setIsAuthenticated={setIsAuthenticated} setLoginSuccess={setLoginSuccess} setLoginSuccessOpen={setLoginSuccessOpen} />} />
           <Route path="/signup" element={<SignUp setIsAuthenticated={setIsAuthenticated} />} />
+          <Route path="/dashboard" element={<Dashboard setIsAuthenticated={setIsAuthenticated} />} />
         </Routes>
       </ThemeProvider>
     </BrowserRouter>

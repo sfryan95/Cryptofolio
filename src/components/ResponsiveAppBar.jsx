@@ -15,14 +15,14 @@ import CustomLogo from '../images/logo.png';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './ResponsiveAppBar.css';
 
-function ResponsiveAppBar({ isAuthenticated, setIsAuthenticated }) {
+function ResponsiveAppBar({ isAuthenticated, setIsAuthenticated, setLoginSuccessOpen }) {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 
   const pages = !isAuthenticated ? ['Home'] : ['Home', 'Portfolio'];
   const loginAndSignUpPages = ['Login', 'SignUp'];
-  const menuPages = !isAuthenticated ? ['Home', 'Login', 'SignUp'] : ['Home', 'Portfolio', 'Favorites', 'Logout'];
-  const settings = ['Favorites', 'Logout'];
+  const menuPages = !isAuthenticated ? ['Home', 'Login', 'SignUp'] : ['Home', 'Portfolio', 'Dashboard', 'Logout'];
+  const settings = ['Dashboard', 'Logout'];
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -176,10 +176,11 @@ function ResponsiveAppBar({ isAuthenticated, setIsAuthenticated }) {
                         localStorage.removeItem('token');
                         handleCloseNavMenu();
                         setIsAuthenticated(false);
+                        setLoginSuccessOpen(false);
                         navigate('/login');
                       } else {
                         handleCloseNavMenu();
-                        handleNavigate(page);
+                        handleNavigate(setting);
                       }
                     }}>
                     <Typography textAlign="center">{setting}</Typography>
