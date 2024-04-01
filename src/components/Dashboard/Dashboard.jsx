@@ -18,6 +18,8 @@ import axios from 'axios';
 
 export default function Dashboard({ setIsAuthenticated }) {
   const [open, setOpen] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const [deleteError, setDeleteError] = useState('');
   const navigate = useNavigate();
 
   const validateEmail = (email) => {
@@ -96,8 +98,10 @@ export default function Dashboard({ setIsAuthenticated }) {
     const data = new FormData(event.currentTarget);
     const email = data.get('email');
     if (!validateEmail(email)) {
+      setEmailError('Invalid email format.');
       return;
     }
+    setEmailError('');
     updateEmail(email);
   };
 
@@ -106,6 +110,43 @@ export default function Dashboard({ setIsAuthenticated }) {
     const data = new FormData(event.currentTarget);
     const password = data.get('password');
     updatePassword(password);
+  };
+
+  const handleConfirmAndDelete = async (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const confirmInput = data.get('Confirm');
+
+    if (confirmInput === 'Confirm') {
+      const token = localStorage.getItem('token');
+      console.log(token);
+      const url = 'http://localhost:3002/user/';
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      };
+      try {
+        const response = await axios.delete(url, config);
+        console.log(response);
+        if (response.status === 204) {
+          localStorage.removeItem('token');
+          setIsAuthenticated(false);
+          handleClose();
+          navigate('/signup');
+        }
+      } catch (e) {
+        console.error('Deletion failed:', e.message);
+        if (e.response) {
+          console.error('Response data:', e.response.data);
+          console.error('Response status:', e.response.status);
+        }
+      }
+    } else {
+      setDeleteError('Please enter "Confirm" to delete your account.');
+      return;
+    }
   };
 
   return (
@@ -140,7 +181,7 @@ export default function Dashboard({ setIsAuthenticated }) {
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <TextField required fullWidth id="email" label="Email Address" name="email" autoComplete="email" />
+              <TextField required fullWidth id="email" label="Email Address" name="email" autoComplete="email" error={!!emailError} helperText={emailError || 'Please enter a valid email.'} />
             </Grid>
           </Grid>
           <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, width: '50%' }}>
@@ -173,19 +214,12 @@ export default function Dashboard({ setIsAuthenticated }) {
               onClose={handleClose}
               PaperProps={{
                 component: 'form',
-                onSubmit: (event) => {
-                  event.preventDefault();
-                  const formData = new FormData(event.currentTarget);
-                  const formJson = Object.fromEntries(formData.entries());
-                  const email = formJson.email;
-                  console.log(email);
-                  handleClose();
-                },
+                onSubmit: handleConfirmAndDelete,
               }}>
               <DialogTitle>Delete Account</DialogTitle>
               <DialogContent>
                 <DialogContentText>To delete account, please enter "Confirm". Action cannot be undone.</DialogContentText>
-                <TextField autoFocus required margin="dense" id="name" name="confirm" label="Confirm" type="text" fullWidth variant="standard" />
+                <TextField autoFocus required margin="dense" id="name" name="Confirm" label="Confirm" type="text" fullWidth variant="standard" error={!!deleteError} helperText={deleteError || 'Please enter "Confirm" to delete your account.'} />
               </DialogContent>
               <DialogActions>
                 <Button variant="contained" onClick={handleClose}>

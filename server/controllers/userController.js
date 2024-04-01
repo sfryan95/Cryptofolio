@@ -21,7 +21,7 @@ userController.insertUser = async (req, res, next) => {
     const userResult = await pool.query('INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id, email', [email, hashedPassword]);
     const user = userResult.rows[0];
     res.locals.user = user; //might need to be '_.id';
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+    const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '24h' });
     res.status(201).json({ token });
     return next();
   } catch (e) {
@@ -42,7 +42,7 @@ userController.insertUser = async (req, res, next) => {
 // expected input - email on req.body
 // expected output - user saved to req.user and/or response status/message
 userController.findUserByEmail = async (req, res, next) => {
-  const { email } = req.body;
+  const email = req.body.email || req.user.email;
   try {
     const response = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     const user = response.rows[0];
@@ -53,10 +53,12 @@ userController.findUserByEmail = async (req, res, next) => {
       req.user = {
         id: user.id,
         password: user.password,
+        email: user.email,
       };
     } else if (req.method === 'DELETE') {
       req.user = {
         id: user.id,
+        email: user.email,
       };
     }
     return next();
@@ -76,7 +78,7 @@ userController.verifyUser = async (req, res, next) => {
   const user = req.user;
   try {
     if (await bcrypt.compare(password, user.password)) {
-      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+      const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '24h' });
       res.status(200).json({ token });
     } else {
       return res.status(401).json({ error: 'Authentication failed' });
@@ -122,7 +124,7 @@ userController.authenticateToken = (req, res, next) => {
   if (token === null) return res.status(401).json({ error: 'Unauthorized' });
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) return res.status(403).json({ error: 'Forbidden' });
-    req.user = user;
+    req.user = { id: user.id, email: user.email };
     next();
   });
 };

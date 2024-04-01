@@ -19,6 +19,6 @@ router.patch('/update-email', userController.authenticateToken, userController.u
 
 router.patch('/update-password', userController.authenticateToken, userController.updatePassword);
 
-router.delete('/', userController.findUserByEmail, userController.deleteUserById);
+router.delete('/', userController.authenticateToken, userController.deleteUserById);
 
 export default router;
