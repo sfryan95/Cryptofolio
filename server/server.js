@@ -10,6 +10,8 @@ import userRouter from './routes/userRouter.js';
 const app = express();
 const PORT = 3002;
 
+console.log('current enviornment', process.env.NODE_ENV);
+
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = path.dirname(__filename);
 app.use(express.json()); // parses the request body if it is JSON and stores result in req.body

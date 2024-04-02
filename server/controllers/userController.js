@@ -237,4 +237,31 @@ userController.deleteUserById = async (req, res, next) => {
   }
 };
 
+userController.deletePortfolioEntryById = async (req, res, next) => {
+  const userId = req.user.id;
+  const { symbol } = req.body;
+  try {
+    const deleteResult = await pool.query('DELETE FROM portfolio USING users WHERE portfolio.user_id = users.id AND users.id = $1 AND portfolio.symbol = $2', [userId, symbol]);
+    if (deleteResult.rowCount > 0) {
+      console.log(`Deleted coin with symbol ${symbol} for user with id ${userId}`);
+      return res.status(204).send(); // or res.status(200).json({ message: 'User successfully deleted' });
+    } else {
+      return res.status(404).json({ error: 'Coin entry not found.' });
+    }
+  } catch (e) {
+    return next({
+      log: `An error occured in userController.deletePortfolioEntryById: ${e}`,
+      status: 500,
+      message: { error: 'Error deleting portfolio entry by user id.' },
+    });
+  }
+};
+
 export default userController;
+
+const dbQuery = `
+SELECT p.symbol, p.quantity
+FROM portfolio p
+JOIN users u ON p.user_id = u.id
+WHERE u.id = $1;
+`;

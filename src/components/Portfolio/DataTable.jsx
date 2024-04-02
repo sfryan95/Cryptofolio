@@ -22,6 +22,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import { cash, percent, sumColumn } from '../../utilities/DataTableUtils.js';
+import axios from 'axios';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -199,12 +200,28 @@ export default function EnhancedTable({ rows, setRows }) {
 
   const handleDeleteSelected = async (e) => {
     const selectedRows = rows.filter((row) => selected.includes(row.id));
-    selectedRows.forEach((row) => {
-      // call to backend to delete from db
-    });
-    const updatedRows = rows.filter((row) => !selected.includes(row.id));
-    setRows(updatedRows);
-    setSelected([]);
+    if (selectedRows.length > 0) {
+      const token = localStorage.getItem('token');
+      const url = 'http://localhost:3002/user/portfolio-entry';
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      };
+      try {
+        await Promise.all(selectedRows.map((row) => axios.delete(url, { ...config, data: { symbol: row.symbol } })));
+        const updatedRows = rows.filter((row) => !selected.includes(row.id));
+        setRows(updatedRows);
+        setSelected([]);
+      } catch (e) {
+        console.error('Deletion failed:', e.message);
+        if (e.response) {
+          console.error('Response data:', e.response.data);
+          console.error('Response status:', e.response.status);
+        }
+      }
+    }
   };
 
   const handleRequestSort = (event, property) => {

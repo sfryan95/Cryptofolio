@@ -21,4 +21,6 @@ router.patch('/update-password', userController.authenticateToken, userControlle
 
 router.delete('/', userController.authenticateToken, userController.deleteUserById);
 
+router.delete('/portfolio-entry', userController.authenticateToken, userController.deletePortfolioEntryById);
+
 export default router;

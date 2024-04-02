@@ -8,7 +8,7 @@ const apiController = {};
 apiController.fetchGainersAndLosers = async (req, res) => {
   console.log('made it to api in server');
   try {
-    const response = await axios.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?start=1&limit=1000&sort=percent_change_24h&cryptocurrency_type=all&tag=all', {
+    const response = await axios.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?start=1&limit=5000&sort=percent_change_24h&cryptocurrency_type=all&tag=all', {
       headers: {
         'X-CMC_PRO_API_KEY': API_Key,
       },

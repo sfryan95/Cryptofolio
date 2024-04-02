@@ -36,7 +36,6 @@ export default function SignInSide({ setIsAuthenticated, setLoginSuccess, setLog
   const [loginFailed, setLoginFailed] = useState(false);
   const navigate = useNavigate();
   const loginAndRedirect = async (email, password) => {
-    console.log('here');
     try {
       const response = await axios.post('/user/login', { email, password });
       if (response.status === 200) {
