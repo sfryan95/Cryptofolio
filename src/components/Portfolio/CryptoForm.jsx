@@ -42,7 +42,6 @@ export default function ComboBox({ coinList, rows, setRows }) {
             };
             try {
               const response = await axios.post(url, data, config);
-              console.log('Response:', response.data);
             } catch (e) {
               console.error('Error:', e);
             }

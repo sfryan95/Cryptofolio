@@ -258,10 +258,3 @@ userController.deletePortfolioEntryById = async (req, res, next) => {
 };
 
 export default userController;
-
-const dbQuery = `
-SELECT p.symbol, p.quantity
-FROM portfolio p
-JOIN users u ON p.user_id = u.id
-WHERE u.id = $1;
-`;

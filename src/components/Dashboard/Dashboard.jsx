@@ -121,7 +121,7 @@ export default function Dashboard({ setIsAuthenticated }) {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="md">
       <CssBaseline />
       <Box
         sx={{
@@ -138,6 +138,7 @@ export default function Dashboard({ setIsAuthenticated }) {
             alignItems: 'center',
             justifyContent: 'center',
             width: '100%',
+            pr: 3,
           }}>
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <SettingsOutlinedIcon />
@@ -146,62 +147,81 @@ export default function Dashboard({ setIsAuthenticated }) {
             Account Settings
           </Typography>
         </Box>
-        <Box component="form" noValidate onSubmit={handleEmailSubmit} sx={{ mt: 3, width: '100%' }}>
-          <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-            Change Email:
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField required fullWidth id="email" label="Email Address" name="email" autoComplete="email" error={!!emailError} helperText={emailError || 'Please enter a valid email.'} />
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            justifyContent: 'center',
+            width: '100%',
+          }}>
+          <Box component="form" noValidate onSubmit={handleEmailSubmit} sx={{ mt: 3, width: '100%' }}>
+            <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
+              Change Email:
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField required fullWidth id="email" label="Email Address" name="email" autoComplete="email" error={!!emailError} helperText={emailError} />
+              </Grid>
             </Grid>
-          </Grid>
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, width: '50%' }}>
-            Submit
-          </Button>
-        </Box>
-        <Box component="form" noValidate onSubmit={handlePasswordSubmit} sx={{ mt: 3, width: '100%' }}>
-          <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-            Change Password:
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField required fullWidth name="password" label="Password" type="password" id="password" autoComplete="new-password" />
-            </Grid>
-          </Grid>
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, width: '50%' }}>
-            Submit
-          </Button>
-        </Box>
-        <Box sx={{ mt: 3, width: '100%', display: 'flex', justifyContent: 'space-between' }}>
-          <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-            Delete Account:
-          </Typography>
-          <React.Fragment>
-            <Button variant="contained" color="error" onClick={handleClickOpen} sx={{ fontWeight: 'bold' }}>
-              Delete Account
+            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, width: '30%' }}>
+              Submit
             </Button>
-            <Dialog
-              open={open}
-              onClose={handleClose}
-              PaperProps={{
-                component: 'form',
-                onSubmit: handleConfirmAndDelete,
-              }}>
-              <DialogTitle>Delete Account</DialogTitle>
-              <DialogContent>
-                <DialogContentText>To delete account, please enter "Confirm". Action cannot be undone.</DialogContentText>
-                <TextField autoFocus required margin="dense" id="name" name="Confirm" label="Confirm" type="text" fullWidth variant="standard" error={!!deleteError} helperText={deleteError || 'Please enter "Confirm" to delete your account.'} />
-              </DialogContent>
-              <DialogActions>
-                <Button variant="contained" onClick={handleClose}>
-                  Cancel
-                </Button>
-                <Button variant="contained" color="error" type="submit">
-                  Delete
-                </Button>
-              </DialogActions>
-            </Dialog>
-          </React.Fragment>
+          </Box>
+          <Box component="form" noValidate onSubmit={handlePasswordSubmit} sx={{ mt: 3, ml: 3, width: '100%' }}>
+            <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
+              Change Password:
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField required fullWidth name="password" label="Password" type="password" id="password" autoComplete="new-password" />
+              </Grid>
+            </Grid>
+            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, width: '30%' }}>
+              Submit
+            </Button>
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            justifyContent: 'center',
+            width: '100%',
+          }}>
+          <Box sx={{ mt: 3, width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
+              Delete Account:
+            </Typography>
+            <React.Fragment>
+              <Button variant="contained" color="error" onClick={handleClickOpen} sx={{ fontWeight: 'bold', mt: 3, mb: 2, width: '40%', pt: '10px', pb: '10px' }}>
+                Delete Account
+              </Button>
+              <Dialog
+                open={open}
+                onClose={handleClose}
+                PaperProps={{
+                  component: 'form',
+                  onSubmit: handleConfirmAndDelete,
+                }}>
+                <DialogTitle>Delete Account</DialogTitle>
+                <DialogContent>
+                  <DialogContentText>To delete account, please enter "Confirm". Action cannot be undone.</DialogContentText>
+                  <TextField autoFocus required margin="dense" id="name" name="Confirm" label="Confirm" type="text" fullWidth variant="standard" error={!!deleteError} helperText={deleteError || 'Please enter "Confirm" to delete your account.'} />
+                </DialogContent>
+                <DialogActions>
+                  <Button variant="contained" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                  <Button variant="contained" color="error" type="submit">
+                    Delete
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            </React.Fragment>
+          </Box>
+          <Box sx={{ mt: 3, width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}></Box>
         </Box>
       </Box>
     </Container>

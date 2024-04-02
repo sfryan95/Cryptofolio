@@ -8,7 +8,7 @@ router.get('/portfolio', userController.authenticateToken, userController.fetchU
 router.post('/signup', userController.insertUser);
 
 router.post('/login', userController.findUserByEmail, userController.verifyUser, (req, res) => {
-  res.status(200);
+  res.status(200).json({ message: 'Login successful' });
 });
 
 router.post('/insert-coin', userController.authenticateToken, userController.insertCoin);
