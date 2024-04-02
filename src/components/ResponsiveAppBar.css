@@ -13,3 +13,15 @@
 #root > div.portfolio-header {
   width: 100%;
 } */
+
+@media (max-width: 432px) {
+  #root > div.portfolio-header > header > div > div > div.MuiTypography-root.MuiTypography-h5.MuiTypography-noWrap.css-1lfs2tq-MuiTypography-root {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  #root > div.portfolio-header > header > div > div > div.MuiTypography-root.MuiTypography-h5.MuiTypography-noWrap.css-1lfs2tq-MuiTypography-root {
+    font-size: 20px;
+  }
+}

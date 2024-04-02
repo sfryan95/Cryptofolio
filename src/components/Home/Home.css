@@ -29,33 +29,11 @@
 
 .gainersAndLosers {
   display: grid;
-  justify-content: center;
-  align-items: center;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  place-items: center;
+  grid-template-columns: repeat(auto-fill, minmax(max(32rem, 25%), 1fr));
   row-gap: 20px;
   width: 100%;
   margin: 0 auto;
-}
-
-@media (max-width: 1302px) {
-  .gainersAndLosers {
-    row-gap: 50px;
-  }
-}
-
-@media (min-width: 820px) {
-  .gainersAndLosers {
-    grid-template-columns: repeat(2, minmax(350px, 1fr));
-  }
-  .card {
-    margin-left: 40px;
-  }
-}
-@media (min-width: 1302px) {
-  .gainersAndLosers {
-    grid-template-columns: repeat(3, 350px);
-    gap: 100px;
-  }
 }
 
 .home-header {

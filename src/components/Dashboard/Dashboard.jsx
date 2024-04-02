@@ -121,7 +121,7 @@ export default function Dashboard({ setIsAuthenticated }) {
   };
 
   return (
-    <Container component="main" maxWidth="md">
+    <Container component="main" maxWidth="sm">
       <CssBaseline />
       <Box
         sx={{
@@ -195,7 +195,7 @@ export default function Dashboard({ setIsAuthenticated }) {
               Delete Account:
             </Typography>
             <React.Fragment>
-              <Button variant="contained" color="error" onClick={handleClickOpen} sx={{ fontWeight: 'bold', mt: 3, mb: 2, width: '40%', pt: '10px', pb: '10px' }}>
+              <Button variant="contained" color="error" onClick={handleClickOpen} sx={{ fontWeight: 'bold', mt: 3, mb: 2, width: '75%', pt: '10px', pb: '10px' }}>
                 Delete Account
               </Button>
               <Dialog
