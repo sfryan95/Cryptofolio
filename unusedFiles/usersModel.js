@@ -1,4 +1,4 @@
-import pool from '../database.js';
+import pool from '../server/database.js';
 
 class User {
   static async createUser(username, password) {

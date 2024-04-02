@@ -5,7 +5,7 @@ const createPortfolioTable = async () => {
       id SERIAL PRIMARY KEY, 
       user_id INTEGER NOT NULL,
       symbol VARCHAR(10) NOT NULL,
-      quantity DECIMAL(10, 4) NOT NULL,
+      quantity DECIMAL(30, 4) NOT NULL,
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );`;
   try {

@@ -114,7 +114,7 @@ function EnhancedTableHead(props) {
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
             inputProps={{
-              'aria-label': 'select all desserts',
+              'aria-label': 'select all coins',
             }}
           />
         </TableCell>
@@ -145,7 +145,7 @@ EnhancedTableHead.propTypes = {
 };
 
 function EnhancedTableToolbar(props) {
-  const { numSelected } = props;
+  const { numSelected, onDeleteSelected } = props;
 
   return (
     <Toolbar
@@ -167,7 +167,7 @@ function EnhancedTableToolbar(props) {
       )}
 
       {numSelected > 0 ? (
-        <Tooltip title="Delete">
+        <Tooltip title="Delete" onClick={onDeleteSelected}>
           <IconButton>
             <DeleteIcon />
           </IconButton>
@@ -187,7 +187,7 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-export default function EnhancedTable({ rows }) {
+export default function EnhancedTable({ rows, setRows }) {
   const [order, setOrder] = React.useState('desc');
   const [orderBy, setOrderBy] = React.useState('allocation');
   const [selected, setSelected] = React.useState([]);
@@ -196,6 +196,16 @@ export default function EnhancedTable({ rows }) {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const valueTotal = sumColumn(rows, 'value');
+
+  const handleDeleteSelected = async (e) => {
+    const selectedRows = rows.filter((row) => selected.includes(row.id));
+    selectedRows.forEach((row) => {
+      // call to backend to delete from db
+    });
+    const updatedRows = rows.filter((row) => !selected.includes(row.id));
+    setRows(updatedRows);
+    setSelected([]);
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -252,7 +262,7 @@ export default function EnhancedTable({ rows }) {
     <Box sx={{ width: '100%' }}>
       <FormControlLabel control={<Switch checked={dense} onChange={handleChangeDense} />} label="Dense padding" className="padding-toggle" />
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar numSelected={selected.length} onDeleteSelected={handleDeleteSelected} />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={dense ? 'small' : 'medium'}>
             <EnhancedTableHead numSelected={selected.length} order={order} orderBy={orderBy} onSelectAllClick={handleSelectAllClick} onRequestSort={handleRequestSort} rowCount={rows.length} />

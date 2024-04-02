@@ -117,7 +117,7 @@ function Portfolio() {
     <div className="portfolio-body">
       <PieChart rows={rows} />
       <CryptoForm coinList={coinList} rows={rows} setRows={setRows} />
-      <DataTable rows={rows} />
+      <DataTable rows={rows} setRows={setRows} />
     </div>
   );
 }

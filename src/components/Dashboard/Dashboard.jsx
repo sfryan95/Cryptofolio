@@ -27,11 +27,11 @@ export default function Dashboard({ setIsAuthenticated }) {
     return regex.test(email);
   };
 
-  const updateEmail = async (email) => {
+  const updateUserInfo = async (type, info) => {
     const token = localStorage.getItem('token');
-    const url = 'http://localhost:3002/user/update-email';
+    const url = `http://localhost:3002/user/update-${type}`;
     const data = {
-      email: email,
+      [type]: info,
     };
     const config = {
       headers: {
@@ -48,36 +48,7 @@ export default function Dashboard({ setIsAuthenticated }) {
         navigate('/login');
       }
     } catch (e) {
-      console.error('Error during email update:', e.message);
-      if (e.response) {
-        console.error('Response data:', e.response.data);
-        console.error('Response status:', e.response.status);
-      }
-    }
-  };
-
-  const updatePassword = async (password) => {
-    const token = localStorage.getItem('token');
-    const url = 'http://localhost:3002/user/update-password';
-    const data = {
-      password: password,
-    };
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    };
-    try {
-      const response = await axios.patch(url, data, config);
-      console.log(response.status);
-      if (response.status === 200) {
-        localStorage.removeItem('token');
-        setIsAuthenticated(false);
-        navigate('/login');
-      }
-    } catch (e) {
-      console.error('Error during email update:', e.message);
+      console.error(`Error during ${type} update:`, e.message);
       if (e.response) {
         console.error('Response data:', e.response.data);
         console.error('Response status:', e.response.status);
@@ -102,14 +73,14 @@ export default function Dashboard({ setIsAuthenticated }) {
       return;
     }
     setEmailError('');
-    updateEmail(email);
+    updateUserInfo('email', email);
   };
 
   const handlePasswordSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const password = data.get('password');
-    updatePassword(password);
+    updateUserInfo('password', password);
   };
 
   const handleConfirmAndDelete = async (event) => {

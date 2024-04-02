@@ -1,4 +1,4 @@
-import pool from '../database.js';
+import pool from '../server/database.js';
 import User from './usersModel.js';
 
 class Portfolio {
@@ -58,7 +58,7 @@ class Portfolio {
     }
   }
   //make a method for deleting portfolio information
-  static async deleteCoin(username, symbol) { }
+  static async deleteCoin(username, symbol) {}
 }
 
 export default Portfolio;
