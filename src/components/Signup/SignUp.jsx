@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -14,18 +14,25 @@ import axios from 'axios';
 
 function Copyright(props) {
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" component={RouterLink} to="/signin">
-        Cryptofolio
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
+    <div>
+      <Typography variant="body2" color="text.secondary" align="center" {...props}>
+        {'Copyright © Trademark ™ Patent Pending... '}
+        <Link sx={{ color: 'white' }} component={RouterLink} to="/">
+          Cryptofolio
+        </Link>{' '}
+        {new Date().getFullYear()}
+        {'.'}
+      </Typography>
+      <Typography variant="body2" color="text.secondary" align="center" {...props}>
+        {'Not Financial Advice!'}
+      </Typography>
+    </div>
   );
 }
 
 export default function SignUp({ setIsAuthenticated }) {
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const navigate = useNavigate();
   const signupAndRedirect = async (email, password) => {
     try {
@@ -47,11 +54,31 @@ export default function SignUp({ setIsAuthenticated }) {
     }
   };
 
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+  const validatePassword = (password) => {
+    const regex = /[^a-zA-Z0-9]+/;
+    return regex.test(password) && password.length >= 8;
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const email = data.get('email');
     const password = data.get('password');
+    if (!validateEmail(email)) {
+      setEmailError('Invalid email format.');
+      return;
+    }
+    if (!validatePassword(password)) {
+      setPasswordError('Invalid password format.');
+      return;
+    }
+    setPasswordError('');
+    setEmailError('');
     signupAndRedirect(email, password);
   };
 
@@ -80,10 +107,10 @@ export default function SignUp({ setIsAuthenticated }) {
               <TextField required fullWidth id="lastName" label="Last Name" name="lastName" autoComplete="family-name" />
             </Grid>
             <Grid item xs={12}>
-              <TextField required fullWidth id="email" label="Email Address" name="email" autoComplete="email" />
+              <TextField required fullWidth id="email" label="Email Address" name="email" autoComplete="email" error={!!emailError} helperText={emailError || 'Please enter a valid email.'} />
             </Grid>
             <Grid item xs={12}>
-              <TextField required fullWidth name="password" label="Password" type="password" id="password" autoComplete="new-password" />
+              <TextField required fullWidth name="password" label="Password" type="password" id="password" autoComplete="new-password" error={!!passwordError} helperText={passwordError || 'Password must be over 8 characters and include 1 symbol.'} />
             </Grid>
           </Grid>
           <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>

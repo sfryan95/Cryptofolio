@@ -19,12 +19,18 @@ import axios from 'axios';
 export default function Dashboard({ setIsAuthenticated }) {
   const [open, setOpen] = useState(false);
   const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [deleteError, setDeleteError] = useState('');
   const navigate = useNavigate();
 
   const validateEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
+  };
+
+  const validatePassword = (password) => {
+    const regex = /[^a-zA-Z0-9]+/;
+    return regex.test(password) && password.length >= 8;
   };
 
   const updateUserInfo = async (type, info) => {
@@ -80,6 +86,11 @@ export default function Dashboard({ setIsAuthenticated }) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const password = data.get('password');
+    if (!validatePassword(password)) {
+      setPasswordError('Invalid password format.');
+      return;
+    }
+    setPasswordError('');
     updateUserInfo('password', password);
   };
 
@@ -161,7 +172,7 @@ export default function Dashboard({ setIsAuthenticated }) {
             </Typography>
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <TextField required fullWidth id="email" label="Email Address" name="email" autoComplete="email" error={!!emailError} helperText={emailError} />
+                <TextField required fullWidth id="email" label="Email Address" name="email" autoComplete="email" error={!!emailError} helperText={emailError || 'Please enter a valid email.'} />
               </Grid>
             </Grid>
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, width: '30%' }}>
@@ -174,7 +185,17 @@ export default function Dashboard({ setIsAuthenticated }) {
             </Typography>
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <TextField required fullWidth name="password" label="Password" type="password" id="password" autoComplete="new-password" />
+                <TextField
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="new-password"
+                  error={!!passwordError}
+                  helperText={passwordError || 'Password must be over 8 characters and include 1 symbol.'}
+                />
               </Grid>
             </Grid>
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, width: '30%' }}>

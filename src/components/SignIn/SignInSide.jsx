@@ -20,20 +20,26 @@ import axios from 'axios';
 
 function Copyright(props) {
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" component={RouterLink} to="/">
-        Cryptofolio
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
+    <div>
+      <Typography variant="body2" color="text.secondary" align="center" {...props}>
+        {'Copyright © Trademark ™ Patent Pending... '}
+        <Link sx={{ color: 'white' }} component={RouterLink} to="/">
+          Cryptofolio
+        </Link>{' '}
+        {new Date().getFullYear()}
+        {'.'}
+      </Typography>
+      <Typography variant="body2" color="text.secondary" align="center" {...props}>
+        {'Not Financial Advice!'}
+      </Typography>
+    </div>
   );
 }
 
 export default function SignInSide({ setIsAuthenticated, setLoginSuccess, setLoginSuccessOpen }) {
   const [failedOpen, setLoginFailedOpen] = useState(false);
   const [loginFailed, setLoginFailed] = useState(false);
+  const [emailError, setEmailError] = useState('');
   const navigate = useNavigate();
   const loginAndRedirect = async (email, password) => {
     try {
@@ -57,10 +63,20 @@ export default function SignInSide({ setIsAuthenticated, setLoginSuccess, setLog
     }
   };
 
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const email = data.get('email');
+    if (!validateEmail(email)) {
+      setEmailError('Invalid email format.');
+      return;
+    }
+    setEmailError('');
     const password = data.get('password');
     loginAndRedirect(email, password);
   };
@@ -118,7 +134,7 @@ export default function SignInSide({ setIsAuthenticated, setLoginSuccess, setLog
             Sign in
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
-            <TextField margin="normal" required fullWidth id="email" label="Email Address" name="email" autoComplete="email" autoFocus />
+            <TextField margin="normal" required fullWidth id="email" label="Email Address" name="email" autoComplete="email" autoFocus error={!!emailError} helperText={emailError} />
             <TextField margin="normal" required fullWidth name="password" label="Password" type="password" id="password" autoComplete="current-password" />
             <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
