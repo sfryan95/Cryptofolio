@@ -15,8 +15,9 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [successOpen, setLoginSuccessOpen] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
+  const [theme, setTheme] = useState(true);
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-  const theme = React.useMemo(
+  const userPreference = React.useMemo(
     () =>
       createTheme({
         palette: {
@@ -25,12 +26,53 @@ function App() {
       }),
     [prefersDarkMode]
   );
+
+  const draculaTheme = createTheme({
+    palette: {
+      mode: 'dark',
+      background: {
+        default: '#282a36',
+        paper: '#282a36',
+      },
+      primary: {
+        main: '#bd93f9',
+      },
+      secondary: {
+        main: '#f8f8f2',
+      },
+      text: {
+        primary: '#f8f8f2',
+        secondary: '#6272a4',
+      },
+      action: {
+        active: '#50fa7b',
+        hover: '#44475a',
+        selected: '#44475a',
+        disabled: '#6272a4',
+      },
+      error: {
+        main: '#ff6e6e',
+      },
+      warning: {
+        main: '#ffb86c',
+      },
+      info: {
+        main: '#8be9fd',
+      },
+      success: {
+        main: '#50fa7b',
+      },
+    },
+  });
+
+  const apperance = theme ? userPreference : draculaTheme;
+
   return (
     <BrowserRouter>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={apperance}>
         <CssBaseline />
         <div className="portfolio-header">
-          <ResponsiveAppBar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} setLoginSuccessOpen={setLoginSuccessOpen} />
+          <ResponsiveAppBar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} setLoginSuccessOpen={setLoginSuccessOpen} theme={theme} setTheme={setTheme} />
         </div>
         <Routes>
           <Route path="/" element={<Home successOpen={successOpen} setLoginSuccessOpen={setLoginSuccessOpen} />} />

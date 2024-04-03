@@ -1,6 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = {
@@ -17,6 +17,9 @@ module.exports = {
     }),
     new webpack.ProvidePlugin({
       'window.@emotion/react': '@emotion/react',
+    }),
+    new CopyWebpackPlugin({
+      patterns: [{ from: './favicon.ico', to: 'favicon.ico' }],
     }),
   ],
   devServer: {

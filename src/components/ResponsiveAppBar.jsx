@@ -13,9 +13,10 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import CustomLogo from '../images/logo.png';
 import { useNavigate, useLocation } from 'react-router-dom';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 import './ResponsiveAppBar.css';
 
-function ResponsiveAppBar({ isAuthenticated, setIsAuthenticated, setLoginSuccessOpen }) {
+function ResponsiveAppBar({ isAuthenticated, setIsAuthenticated, setLoginSuccessOpen, theme, setTheme }) {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 
@@ -49,6 +50,10 @@ function ResponsiveAppBar({ isAuthenticated, setIsAuthenticated, setLoginSuccess
     }
   };
 
+  const handleToggleTheme = () => {
+    setTheme(!theme);
+  };
+
   return (
     <AppBar position="static">
       <Container maxWidth={false} sx={{ p: 0, width: '100%' }}>
@@ -69,7 +74,6 @@ function ResponsiveAppBar({ isAuthenticated, setIsAuthenticated, setLoginSuccess
             }}>
             Cryptofolio
           </Typography>
-
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton size="large" aria-label="account of current user" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleOpenNavMenu} color="inherit">
               <MenuIcon />
@@ -134,6 +138,10 @@ function ResponsiveAppBar({ isAuthenticated, setIsAuthenticated, setLoginSuccess
           </Box>
           {!isAuthenticated ? (
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>
+              <IconButton sx={{ alignSelf: 'center' }} onClick={handleToggleTheme}>
+                <DarkModeIcon />
+              </IconButton>
+
               {loginAndSignUpPages.map((page) => (
                 <Button
                   key={page}
@@ -148,6 +156,9 @@ function ResponsiveAppBar({ isAuthenticated, setIsAuthenticated, setLoginSuccess
             </Box>
           ) : (
             <Box sx={{ flexGrow: 0 }}>
+              <IconButton sx={{ alignSelf: 'center', mr: 1 }} onClick={handleToggleTheme}>
+                <DarkModeIcon />
+              </IconButton>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar alt="Travis Howard" src="https://www.freep.com/gcdn/presto/2020/09/03/PDTF/bbad2932-c0b6-405b-8242-82f8bac85ed5-031120_big_sean_rg_07.jpg" />
