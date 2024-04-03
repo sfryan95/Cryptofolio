@@ -8,7 +8,6 @@ const apiController = {};
 apiController.fetchGainers = async (req, res) => {
   console.log('made it to fetchGainers in server');
   const start = req.query.start || 1;
-  const limit = req.query.limit || 9;
   const url = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest`;
   try {
     const response = await axios.get(url, {
@@ -17,7 +16,7 @@ apiController.fetchGainers = async (req, res) => {
       },
       params: {
         start: start,
-        limit: limit,
+        limit: 12,
         sort: 'percent_change_24h',
         sort_dir: 'desc',
         cryptocurrency_type: 'all',
@@ -34,7 +33,6 @@ apiController.fetchGainers = async (req, res) => {
 apiController.fetchLosers = async (req, res) => {
   console.log('made it to fetchLosers in server');
   const start = req.query.start || 1;
-  const limit = req.query.limit || 9;
   const url = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest`;
   try {
     const response = await axios.get(url, {
@@ -43,7 +41,7 @@ apiController.fetchLosers = async (req, res) => {
       },
       params: {
         start: start,
-        limit: limit,
+        limit: 12,
         sort: 'percent_change_24h',
         sort_dir: 'asc',
         cryptocurrency_type: 'all',
