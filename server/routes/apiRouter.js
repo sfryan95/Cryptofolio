@@ -3,7 +3,9 @@ import apiController from '../controllers/apiController.js';
 
 const router = express.Router();
 
-router.get('/gainers-losers', apiController.fetchGainersAndLosers);
+router.get('/gainers', apiController.fetchGainers);
+
+router.get('/losers', apiController.fetchLosers);
 
 router.get('/autocomplete', apiController.fetchAutoCompleteCoinList);
 

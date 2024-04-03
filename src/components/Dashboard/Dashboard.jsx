@@ -14,6 +14,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { styled } from '@mui/material/styles';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import axios from 'axios';
 
 export default function Dashboard({ setIsAuthenticated }) {
@@ -131,8 +133,20 @@ export default function Dashboard({ setIsAuthenticated }) {
     }
   };
 
+  const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+  });
+
   return (
-    <Container component="main" maxWidth="sm">
+    <Container component="main" /*  maxWidth="sm" */ sx={{ width: '825px' }}>
       <CssBaseline />
       <Box
         sx={{
@@ -175,7 +189,7 @@ export default function Dashboard({ setIsAuthenticated }) {
                 <TextField required fullWidth id="email" label="Email Address" name="email" autoComplete="email" error={!!emailError} helperText={emailError || 'Please enter a valid email.'} />
               </Grid>
             </Grid>
-            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, width: '30%' }}>
+            <Button type="submit" fullWidth variant="contained" sx={{ fontWeight: 'bold', mt: 3, mb: 2, width: '30%' }}>
               Submit
             </Button>
           </Box>
@@ -198,7 +212,7 @@ export default function Dashboard({ setIsAuthenticated }) {
                 />
               </Grid>
             </Grid>
-            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, width: '30%' }}>
+            <Button type="submit" fullWidth variant="contained" sx={{ fontWeight: 'bold', mt: 3, mb: 2, width: '30%' }}>
               Submit
             </Button>
           </Box>
@@ -216,7 +230,7 @@ export default function Dashboard({ setIsAuthenticated }) {
               Delete Account:
             </Typography>
             <React.Fragment>
-              <Button variant="contained" color="error" onClick={handleClickOpen} sx={{ fontWeight: 'bold', mt: 3, mb: 2, width: '75%', pt: '10px', pb: '10px' }}>
+              <Button variant="contained" color="error" onClick={handleClickOpen} sx={{ fontWeight: 'bold', mt: 3, mb: 2, width: '50%', pt: '10px', pb: '10px' }}>
                 Delete Account
               </Button>
               <Dialog
@@ -242,7 +256,15 @@ export default function Dashboard({ setIsAuthenticated }) {
               </Dialog>
             </React.Fragment>
           </Box>
-          <Box sx={{ mt: 3, width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}></Box>
+          <Box sx={{ mt: 3, width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
+              Upload Avatar Image:
+            </Typography>
+            <Button component="label" role={undefined} variant="contained" tabIndex={-1} startIcon={<CloudUploadIcon />} sx={{ fontWeight: 'bold', mt: 3, mb: 2, width: '40%' }}>
+              Upload file
+              <VisuallyHiddenInput type="file" />
+            </Button>
+          </Box>
         </Box>
       </Box>
     </Container>

@@ -4,11 +4,12 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { percent } from '../../utilities/DataTableUtils';
-import './Home.css';
 
-function card(coin) {
+function CoinCard({ coin, viewMode, isDarkMode }) {
+  const textColor = viewMode ? (isDarkMode ? 'lime' : 'action.active') : isDarkMode ? 'red' : 'error.main';
+
   return (
-    <Box sx={{ minWidth: 375 }} key={coin.id}>
+    <Box sx={{ minWidth: 375 }}>
       <Card className="card" variant="outlined">
         <CardContent>
           <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
@@ -17,17 +18,11 @@ function card(coin) {
           <Typography variant="h5" component="div">
             {coin.name}
           </Typography>
-          <Typography sx={{ mb: 1.5, color: coin.percent_change_24h > 0 ? 'lime' : 'red' }}>{`${percent(coin.percent_change_24h / 100)} (24hr)`}</Typography>
+          <Typography color={textColor} sx={{ mb: 1.5 }}>{`${percent(coin.percent_change_24h / 100)} (24hr)`}</Typography>
         </CardContent>
       </Card>
     </Box>
   );
 }
 
-export default function GainersAndLosersCards({ coinList }) {
-  const gainers = coinList.slice(0, 3).map((coin) => card(coin));
-  const losers = coinList.slice(-3).map((coin) => card(coin));
-  const gainersAndLosers = [...gainers, ...losers];
-
-  return <div className="gainersAndLosers">{gainersAndLosers}</div>;
-}
+export default CoinCard;

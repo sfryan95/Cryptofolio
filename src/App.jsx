@@ -75,7 +75,7 @@ function App() {
           <ResponsiveAppBar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} setLoginSuccessOpen={setLoginSuccessOpen} theme={theme} setTheme={setTheme} />
         </div>
         <Routes>
-          <Route path="/" element={<Home successOpen={successOpen} setLoginSuccessOpen={setLoginSuccessOpen} />} />
+          <Route path="/" element={<Home successOpen={successOpen} setLoginSuccessOpen={setLoginSuccessOpen} isDarkMode={theme} />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/login" element={<SignIn setIsAuthenticated={setIsAuthenticated} setLoginSuccess={setLoginSuccess} setLoginSuccessOpen={setLoginSuccessOpen} />} />
           <Route path="/signup" element={<SignUp setIsAuthenticated={setIsAuthenticated} />} />
