@@ -211,8 +211,17 @@ export default function EnhancedTable({ rows, setRows }) {
       };
       try {
         await Promise.all(selectedRows.map((row) => axios.delete(url, { ...config, data: { symbol: row.symbol } })));
-        const updatedRows = rows.filter((row) => !selected.includes(row.id));
-        setRows(updatedRows);
+        // const updatedRows = rows.filter((row) => !selected.includes(row.id));
+        setRows((currentRows) => {
+          const remainingRows = currentRows.filter((row) => !selected.includes(row.id));
+          const updatedTotalValue = remainingRows.reduce((acc, coin) => acc + coin.value, 0);
+          return updatedTotalValue > 0
+            ? remainingRows.map((coin) => ({
+                ...coin,
+                allocation: coin.value / updatedTotalValue,
+              }))
+            : remainingRows;
+        });
         setSelected([]);
       } catch (e) {
         console.error('Deletion failed:', e.message);
