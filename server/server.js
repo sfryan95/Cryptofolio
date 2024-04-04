@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import detectPort from 'detect-port';
 import path from 'path';
-import multer from 'multer';
 import 'dotenv/config';
 import { fileURLToPath } from 'url';
 import apiRouter from './routes/apiRouter.js';

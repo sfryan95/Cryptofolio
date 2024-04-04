@@ -17,7 +17,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import axios from 'axios';
-// import fs from 'fs/promises'
 
 export default function Dashboard({ setIsAuthenticated }) {
   const [open, setOpen] = useState(false);
