@@ -75,8 +75,10 @@ function ResponsiveAppBar({ isAuthenticated, setIsAuthenticated, setLoginSuccess
   };
 
   useEffect(() => {
-    fetchAvatar();
-  }, []);
+    if (isAuthenticated) {
+      fetchAvatar();
+    }
+  }, [isAuthenticated]);
 
   return (
     <AppBar position="static">
@@ -210,6 +212,7 @@ function ResponsiveAppBar({ isAuthenticated, setIsAuthenticated, setLoginSuccess
                       if (setting === 'Logout') {
                         localStorage.removeItem('token');
                         handleCloseNavMenu();
+                        setAvatar('');
                         setIsAuthenticated(false);
                         setLoginSuccessOpen(false);
                         navigate('/login');

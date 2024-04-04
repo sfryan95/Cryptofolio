@@ -86,7 +86,9 @@ function Home({ successOpen, setLoginSuccessOpen, isDarkMode }) {
     return () => window.removeEventListener('scroll', debouncedHandleScroll);
   }, [isLoading, currentPage, viewMode]);
 
-  const AntSwitch = styled(Switch)(({ isDarkMode, checked }) => ({
+  const AntSwitch = styled(Switch, {
+    shouldForwardProp: (prop) => prop !== 'isDarkMode',
+  })(({ isDarkMode, checked }) => ({
     width: 28,
     height: 16,
     padding: 0,

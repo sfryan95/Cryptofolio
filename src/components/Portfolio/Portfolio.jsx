@@ -26,8 +26,8 @@ function Portfolio() {
         return [];
       }
       return response.data;
-    } catch (error) {
-      console.error('There was an error fetching the portfolio:', error.message);
+    } catch (e) {
+      console.error('There was an error fetching the portfolio:', e.message);
     }
   }
 
