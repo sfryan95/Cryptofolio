@@ -6,7 +6,7 @@ import './Portfolio.css';
 import CryptoCoin from '../../models/CoinClass.jsx';
 import axios from 'axios';
 
-function Portfolio() {
+function Portfolio({ isDarkMode }) {
   const [rows, setRows] = useState([]);
   const [coinList, setCoinList] = useState([]);
 
@@ -117,7 +117,7 @@ function Portfolio() {
     <div className="portfolio-body">
       <PieChart rows={rows} />
       <CryptoForm coinList={coinList} rows={rows} setRows={setRows} />
-      <DataTable rows={rows} setRows={setRows} />
+      <DataTable rows={rows} setRows={setRows} isDarkMode={isDarkMode} />
     </div>
   );
 }

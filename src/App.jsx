@@ -76,7 +76,7 @@ function App() {
         </div>
         <Routes>
           <Route path="/" element={<Home successOpen={successOpen} setLoginSuccessOpen={setLoginSuccessOpen} isDarkMode={theme} />} />
-          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/portfolio" element={<Portfolio isDarkMode={theme} />} />
           <Route path="/login" element={<SignIn setIsAuthenticated={setIsAuthenticated} setLoginSuccess={setLoginSuccess} setLoginSuccessOpen={setLoginSuccessOpen} />} />
           <Route path="/signup" element={<SignUp setIsAuthenticated={setIsAuthenticated} />} />
           <Route path="/dashboard" element={<Dashboard setIsAuthenticated={setIsAuthenticated} />} />

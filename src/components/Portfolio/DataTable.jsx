@@ -25,6 +25,16 @@ import { cash, percent, sumColumn } from '../../utilities/DataTableUtils.js';
 import axios from 'axios';
 
 function descendingComparator(a, b, orderBy) {
+  if (orderBy === 'quantity') {
+    const valA = parseFloat(a[orderBy]);
+    const valB = parseFloat(b[orderBy]);
+    if (valB < valA) {
+      return -1;
+    }
+    if (valB > valA) {
+      return 1;
+    }
+  }
   if (b[orderBy] < a[orderBy]) {
     return -1;
   }
@@ -188,7 +198,7 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-export default function EnhancedTable({ rows, setRows }) {
+export default function EnhancedTable({ rows, setRows, isDarkMode }) {
   const [order, setOrder] = React.useState('desc');
   const [orderBy, setOrderBy] = React.useState('allocation');
   const [selected, setSelected] = React.useState([]);
@@ -315,7 +325,7 @@ export default function EnhancedTable({ rows, setRows }) {
                     <TableCell align="right">{row.symbol}</TableCell>
                     <TableCell align="right">{Number(row.quantity).toFixed(4)}</TableCell>
                     <TableCell align="right">{cash(row.price)}</TableCell>
-                    <TableCell align="right" sx={{ color: row.percent_change_24h / 100 > 0 ? 'lime' : 'red' }}>
+                    <TableCell align="right" sx={{ color: row.percent_change_24h / 100 > 0 ? (isDarkMode ? 'lime' : '#50fa7b') : isDarkMode ? 'red' : '#ff6e6e' }}>
                       {percent(row.percent_change_24h / 100)}
                     </TableCell>
                     <TableCell align="right">{cash(row.value)}</TableCell>
