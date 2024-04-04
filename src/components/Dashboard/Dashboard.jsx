@@ -17,6 +17,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import axios from 'axios';
+// import fs from 'fs/promises'
 
 export default function Dashboard({ setIsAuthenticated }) {
   const [open, setOpen] = useState(false);
@@ -145,6 +146,28 @@ export default function Dashboard({ setIsAuthenticated }) {
     width: 1,
   });
 
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) {
+      console.log('No file selected.');
+      return;
+    }
+    const formData = new FormData();
+    formData.append('avatar', file, file.name);
+    const token = localStorage.getItem('token');
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    try {
+      const response = await axios.put('http://localhost:3002/user/update-avatar', formData, config);
+      console.log('Avatar updated successfully', response.data);
+    } catch (e) {
+      console.error('Upload failed:', e);
+    }
+  };
+
   return (
     <Container component="main" /*  maxWidth="sm" */ sx={{ width: '825px' }}>
       <CssBaseline />
@@ -262,7 +285,7 @@ export default function Dashboard({ setIsAuthenticated }) {
             </Typography>
             <Button component="label" role={undefined} variant="contained" tabIndex={-1} startIcon={<CloudUploadIcon />} sx={{ fontWeight: 'bold', mt: 3, mb: 2, width: '40%' }}>
               Upload file
-              <VisuallyHiddenInput type="file" />
+              <VisuallyHiddenInput type="file" onChange={handleFileChange} id="avatar-upload" accept="image/*" />
             </Button>
           </Box>
         </Box>

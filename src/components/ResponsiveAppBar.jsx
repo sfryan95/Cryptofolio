@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -14,11 +14,13 @@ import MenuItem from '@mui/material/MenuItem';
 import CustomLogo from '../images/logo.png';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
+import axios from 'axios';
 import './ResponsiveAppBar.css';
 
 function ResponsiveAppBar({ isAuthenticated, setIsAuthenticated, setLoginSuccessOpen, theme, setTheme }) {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [avatar, setAvatar] = useState('');
 
   const pages = !isAuthenticated ? ['Home'] : ['Home', 'Portfolio'];
   const loginAndSignUpPages = ['Login', 'SignUp'];
@@ -53,6 +55,28 @@ function ResponsiveAppBar({ isAuthenticated, setIsAuthenticated, setLoginSuccess
   const handleToggleTheme = () => {
     setTheme(!theme);
   };
+
+  const fetchAvatar = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      };
+      const response = await axios.get('http://localhost:3002/user/avatar', config);
+      const avatarUrl = response.data.avatarUrl;
+      console.log('Avatar URL:', avatarUrl);
+      setAvatar('http://localhost:8080' + avatarUrl);
+    } catch (e) {
+      console.error('Failed to avatar:', e);
+    }
+  };
+
+  useEffect(() => {
+    fetchAvatar();
+  }, []);
 
   return (
     <AppBar position="static">
@@ -161,7 +185,7 @@ function ResponsiveAppBar({ isAuthenticated, setIsAuthenticated, setLoginSuccess
               </IconButton>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Travis Howard" src="https://www.freep.com/gcdn/presto/2020/09/03/PDTF/bbad2932-c0b6-405b-8242-82f8bac85ed5-031120_big_sean_rg_07.jpg" />
+                  <Avatar alt="Travis Howard" src={avatar} />
                 </IconButton>
               </Tooltip>
               <Menu

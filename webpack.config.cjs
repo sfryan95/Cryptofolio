@@ -8,6 +8,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, '/dist'), // the bundle output path
     filename: 'bundle.js', // the name of the bundle
+    // publicPath: '/dist/',
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -19,7 +20,11 @@ module.exports = {
       'window.@emotion/react': '@emotion/react',
     }),
     new CopyWebpackPlugin({
-      patterns: [{ from: './favicon.ico', to: 'favicon.ico' }],
+      patterns: [
+        { from: './favicon.ico', to: 'favicon.ico' },
+        { from: './src/avatars', to: 'avatars' },
+        { from: './src/images', to: 'images' },
+      ],
     }),
   ],
   devServer: {

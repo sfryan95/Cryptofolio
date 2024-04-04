@@ -23,7 +23,6 @@ userController.insertUser = async (req, res, next) => {
     res.locals.user = user; //might need to be '_.id';
     const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '24h' });
     res.status(201).json({ token });
-    return next();
   } catch (e) {
     let errorStatus = 500;
     let errorMessage = 'An unexpected error occurred. Please try again!';
@@ -68,6 +67,24 @@ userController.findUserByEmail = async (req, res, next) => {
       status: 401,
       message: { error: 'An unexpected errcdor occurred.' },
     });
+  }
+};
+
+// expected input - password on req.body; user on req.user
+// expected output - JWT and/or response status/message
+userController.getUserAvatar = async (req, res, next) => {
+  const userId = req.user.id;
+  console.log(`fetched avatar for: ${userId}`);
+  try {
+    const result = await pool.query('SELECT avatar_url FROM users WHERE id = $1', [userId]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const avatarUrl = result.rows[0].avatar_url;
+    return res.json({ avatarUrl });
+  } catch (e) {
+    console.error('Error fetching user avatar:', e);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -214,6 +231,42 @@ userController.updatePassword = async (req, res, next) => {
   } catch (e) {
     console.error('Error updating user:', e);
     return res.status(500).json({ error: 'Error updating password.' });
+  }
+};
+
+// expected input - userId on req.user; avatar file on req.body
+// expected output - avatar of user changed in db and/or status/message
+userController.updateAvatar = async (req, res, next) => {
+  const userId = req.user.id;
+  const avatarFile = req.file;
+  try {
+    if (!userId) {
+      console.error('User not found.');
+      return res.status(404).json({ error: 'User not found.' });
+    }
+    if (!avatarFile) {
+      console.error('No avatar file uploaded.');
+      return res.status(404).json({ error: 'No avatar file uploaded.' });
+    }
+
+    const avatarUrl = `/avatars/${avatarFile.filename}`;
+
+    const { rows } = await pool.query('UPDATE users SET avatar_url = $1 WHERE id = $2 RETURNING id, avatar_url', [avatarUrl, userId]);
+    if (rows.length === 0) {
+      return res.status(404).json({ message: `No user avatar found or updated for : ${userId}` });
+    }
+    console.log(`Avatar updated for user ID: ${rows[0].id}`, rows);
+    return res.status(200).json({ message: 'Avatar successfully updated.' });
+  } catch (e) {
+    if (e instanceof multer.MulterError) {
+      // Handle Multer errors
+      console.error('Multer error:', e);
+      return res.status(400).json({ error: e.message });
+    } else {
+      // Handle other errors
+      console.error('Error updating avatar:', e);
+      return res.status(500).json({ error: 'Error updating avatar.' });
+    }
   }
 };
 
