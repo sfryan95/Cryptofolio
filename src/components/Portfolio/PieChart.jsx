@@ -11,8 +11,7 @@ const sizing = {
 };
 
 export default function PieChartWithCustomizedLabel({ rows }) {
-  const [chartData, setChartData] = useState([]);
-  const [total, setTotal] = useState(0);
+  const [chartState, setChartState] = useState({ data: [], total: 0 });
 
   useEffect(() => {
     const newChartData = rows.map((row, index) => ({
@@ -20,13 +19,15 @@ export default function PieChartWithCustomizedLabel({ rows }) {
       value: row.value || 0, // Provide a default value if undefined
       color: colors[index % colors.length],
     }));
-    setChartData(newChartData);
-    const newTotal = newChartData.map((item) => item.value).reduce((a, b) => a + b, 0);
-    setTotal(newTotal);
+    const newTotal = newChartData.reduce((a, b) => a + b.value, 0);
+    setChartState({ data: newChartData, total: newTotal });
   }, [rows]);
 
   const getArcLabel = (params) => {
-    const percent = params.value / total;
+    if (chartState.total === 0) {
+      return '';
+    }
+    const percent = params.value / chartState.total;
     if (percent * 100 >= 3) {
       return `${(percent * 100).toFixed(0)}%`;
     }
@@ -37,7 +38,7 @@ export default function PieChartWithCustomizedLabel({ rows }) {
       series={[
         {
           outerRadius: 150,
-          data: chartData,
+          data: chartState.data,
           arcLabel: getArcLabel,
           arcLabelRadius: 110,
         },
