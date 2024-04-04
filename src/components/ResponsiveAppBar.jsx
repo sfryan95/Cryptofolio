@@ -67,7 +67,7 @@ function ResponsiveAppBar({ isAuthenticated, setIsAuthenticated, setLoginSuccess
       };
       const response = await axios.get('http://localhost:3002/user/avatar', config);
       const avatarUrl = response.data.avatarUrl;
-      console.log('Avatar URL:', avatarUrl);
+      // console.log('Avatar URL:', avatarUrl);
       setAvatar('http://localhost:8080' + avatarUrl);
     } catch (e) {
       console.error('Failed to avatar:', e);

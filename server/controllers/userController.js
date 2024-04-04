@@ -70,8 +70,8 @@ userController.findUserByEmail = async (req, res, next) => {
   }
 };
 
-// expected input - password on req.body; user on req.user
-// expected output - JWT and/or response status/message
+// expected input - user on req.user
+// expected output - avatar url from DB and/or response status/message
 userController.getUserAvatar = async (req, res, next) => {
   const userId = req.user.id;
   console.log(`fetched avatar for: ${userId}`);

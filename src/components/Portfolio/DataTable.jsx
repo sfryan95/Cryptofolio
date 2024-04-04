@@ -197,6 +197,7 @@ export default function EnhancedTable({ rows, setRows }) {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const valueTotal = sumColumn(rows, 'value');
+  const allocationTotal = sumColumn(rows, 'allocation');
 
   const handleDeleteSelected = async (e) => {
     const selectedRows = rows.filter((row) => selected.includes(row.id));
@@ -334,7 +335,7 @@ export default function EnhancedTable({ rows, setRows }) {
                 <TableCell rowSpan={3} colSpan={5} />
                 <TableCell align="right">Total</TableCell>
                 <TableCell align="right">{cash(valueTotal)}</TableCell>
-                <TableCell align="right">{'100%'}</TableCell>
+                <TableCell align="right">{percent(allocationTotal)}</TableCell>
               </TableRow>
             </TableBody>
           </Table>

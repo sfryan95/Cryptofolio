@@ -13,15 +13,17 @@ export default function ComboBox({ coinList, rows, setRows }) {
   function handleAutocompleteChange(event, newValue) {
     setSelectedCoin(newValue);
   }
+  // allows numbers, a single minus sign at the start, and a single decimal point
+  const validQuantityFormat = /^-?\d*(\.\d*)?$/;
 
   function handleQuantityChange(event) {
     const { value } = event.target;
-    setQuantity(value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'));
+    if (validQuantityFormat.test(value) || value === '-') setQuantity(value);
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (selectedCoin !== null) {
+    if (selectedCoin !== null || (validQuantityFormat.test(quantity) && quantity !== '')) {
       const coinExists = rows.find((row) => row.symbol === selectedCoin.symbol);
       if (!coinExists) {
         try {
@@ -76,49 +78,66 @@ export default function ComboBox({ coinList, rows, setRows }) {
         const coinToUpdate = { ...rows[index] };
         const updatedQuantity = Number(coinToUpdate.quantity) + Number(quantity);
         const token = localStorage.getItem('token');
-        const url = 'http://localhost:3002/user/update-quantity';
-        const data = {
-          symbol: selectedCoin.symbol,
-          quantity: updatedQuantity,
-        };
         const config = {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         };
-        try {
-          const response = await axios.patch(url, data, config);
-          console.log('Response:', response.data);
-        } catch (e) {
-          console.error('Error:', e);
-        }
-        setRows((currentRows) => {
-          const index = currentRows.findIndex((row) => row.symbol === selectedCoin.symbol);
 
-          if (index !== -1) {
-            // const coinToUpdate = { ...currentRows[index] };
-            // const updatedQuantity = Number(coinToUpdate.quantity) + Number(quantity);
-            const { id, name, symbol, price, percent_change_24h } = coinToUpdate;
-            const newCoin = new CryptoCoin(id, name, symbol, updatedQuantity, price, percent_change_24h);
-            const updatedRows = currentRows.map((coin, i) => {
-              if (i === index) {
-                return newCoin;
-              } else {
-                return coin;
-              }
-            });
-            const updatedTotalValue = updatedRows.reduce((acc, coin) => acc + Number(coin.value), 0);
-            const finalRows = updatedRows.map((coin) => ({
-              ...coin,
-              value: coin.price * coin.quantity,
-              allocation: coin.value / updatedTotalValue,
-            }));
-            return finalRows;
+        if (updatedQuantity <= 0) {
+          const url = 'http://localhost:3002/user/portfolio-entry';
+          await axios.delete(url, { ...config, data: { symbol: coinToUpdate.symbol } });
+          setRows((currentRows) => {
+            const remainingRows = currentRows.filter((row) => row.symbol !== coinToUpdate.symbol);
+            const updatedTotalValue = remainingRows.reduce((acc, coin) => acc + coin.value, 0);
+            return updatedTotalValue > 0
+              ? remainingRows.map((coin) => ({
+                  ...coin,
+                  allocation: coin.value / updatedTotalValue,
+                }))
+              : remainingRows;
+          });
+        } else {
+          const url = 'http://localhost:3002/user/update-quantity';
+          const data = {
+            symbol: selectedCoin.symbol,
+            quantity: updatedQuantity,
+          };
+          try {
+            const response = await axios.patch(url, data, config);
+            console.log('Response:', response.data);
+          } catch (e) {
+            console.error('Error:', e);
           }
-          return currentRows;
-        });
+          setRows((currentRows) => {
+            const index = currentRows.findIndex((row) => row.symbol === selectedCoin.symbol);
+
+            if (index !== -1) {
+              const { id, name, symbol, price, percent_change_24h } = coinToUpdate;
+              const newCoin = new CryptoCoin(id, name, symbol, updatedQuantity, price, percent_change_24h);
+              const updatedRows = currentRows.map((coin, i) => {
+                if (i === index) {
+                  return newCoin;
+                } else {
+                  return coin;
+                }
+              });
+              const updatedTotalValue = updatedRows.reduce((acc, coin) => acc + Number(coin.value), 0);
+              const finalRows = updatedRows.map((coin) => ({
+                ...coin,
+                value: coin.price * coin.quantity,
+                allocation: coin.value / updatedTotalValue,
+              }));
+              return finalRows;
+            }
+            return currentRows;
+          });
+        }
       }
+    } else {
+      alert('Please enter a vald coin name and quantity');
+      return;
     }
     setSelectedCoin(null);
     setQuantity('');
