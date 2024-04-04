@@ -31,10 +31,11 @@ function Home({ successOpen, setLoginSuccessOpen, isDarkMode }) {
     // console.log('Fetching cryptocurrencies for viewMode:', viewMode, 'and page:', page);
     setIsLoading(true);
     try {
-      const apiUrl = viewMode ? 'http://localhost:3002/api/gainers' : 'http://localhost:3002/api/losers';
+      const apiUrl = 'http://localhost:3002/api/gainers-losers';
       const response = await axios.get(apiUrl, {
         params: {
           start: 1 + (page - 1) * 9,
+          sort_dir: viewMode ? 'desc' : 'asc',
         },
       });
       const data = response.data.data;

@@ -5,9 +5,10 @@ const API_Key = process.env.CMC_PRO_API_KEY;
 
 const apiController = {};
 
-apiController.fetchGainers = async (req, res) => {
-  console.log('made it to fetchGainers in server');
+apiController.fetchGainersOrLosers = async (req, res) => {
+  console.log('made it to fetchGainersOrLosers in server');
   const start = req.query.start || 1;
+  const sort_dir = req.query.sort_dir || 'desc';
   const url = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest`;
   try {
     const response = await axios.get(url, {
@@ -18,32 +19,7 @@ apiController.fetchGainers = async (req, res) => {
         start: start,
         limit: 12,
         sort: 'percent_change_24h',
-        sort_dir: 'desc',
-        cryptocurrency_type: 'all',
-        tag: 'all',
-      },
-    });
-    res.json(response.data);
-  } catch (e) {
-    console.error('Error fetching data from CoinMarketCap', e);
-    res.status(500).json({ message: 'Failed to Fetch Data' });
-  }
-};
-
-apiController.fetchLosers = async (req, res) => {
-  console.log('made it to fetchLosers in server');
-  const start = req.query.start || 1;
-  const url = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest`;
-  try {
-    const response = await axios.get(url, {
-      headers: {
-        'X-CMC_PRO_API_KEY': API_Key,
-      },
-      params: {
-        start: start,
-        limit: 12,
-        sort: 'percent_change_24h',
-        sort_dir: 'asc',
+        sort_dir: sort_dir,
         cryptocurrency_type: 'all',
         tag: 'all',
       },
