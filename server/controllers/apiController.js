@@ -34,7 +34,7 @@ apiController.fetchGainersOrLosers = async (req, res) => {
 apiController.fetchAutoCompleteCoinList = async (req, res) => {
   console.log('autocomplete check');
   try {
-    const response = await axios.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?start=1&limit=500&sort=market_cap&cryptocurrency_type=all&tag=all', {
+    const response = await axios.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?start=1&limit=5000&sort=market_cap&cryptocurrency_type=all&tag=all', {
       headers: {
         'X-CMC_PRO_API_KEY': API_Key,
       },

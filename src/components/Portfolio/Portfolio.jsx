@@ -63,7 +63,7 @@ function Portfolio({ isDarkMode }) {
       const currentTime = new Date().getTime();
       if (cachedData) {
         const { timestamp, data } = JSON.parse(cachedData);
-        const isCacheValid = currentTime - timestamp < 24 * 60 * 60 * 1000;
+        const isCacheValid = currentTime - timestamp < 7 * 24 * 60 * 60 * 1000;
         if (isCacheValid) {
           setCoinList(data);
           return;
