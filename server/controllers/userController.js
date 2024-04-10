@@ -65,7 +65,7 @@ userController.findUserByEmail = async (req, res, next) => {
     return next({
       log: `An error occured in userController.findUserByEmail: ${e}`,
       status: 401,
-      message: { error: 'An unexpected errcdor occurred.' },
+      message: { error: 'An unexpected error occurred.' },
     });
   }
 };
@@ -112,6 +112,7 @@ userController.verifyUser = async (req, res, next) => {
 // expected input - userId on req.user
 // expected output - portfolio data from db and/or response status/message
 userController.fetchUserPortfolioData = async (req, res) => {
+  console.log('made it to fetchUserPortfolioData');
   const userId = req.user.id;
   console.log(`fetched user portfolio for: ${userId}`);
   try {
@@ -134,17 +135,17 @@ userController.fetchUserPortfolioData = async (req, res) => {
 
 // expected input - token from req.headers
 // expected output - forbidden/unauthorized response status/message or moves on to next middleware
-userController.authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+// userController.authenticateToken = (req, res, next) => {
+//   const authHeader = req.headers['authorization'];
+//   const token = authHeader && authHeader.split(' ')[1];
 
-  if (token === null) return res.status(401).json({ error: 'Unauthorized' });
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ error: 'Forbidden' });
-    req.user = { id: user.id, email: user.email };
-    next();
-  });
-};
+//   if (token === null) return res.status(401).json({ error: 'Unauthorized' });
+//   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+//     if (err) return res.status(403).json({ error: 'Forbidden' });
+//     req.user = { id: user.id, email: user.email };
+//     next();
+//   });
+// };
 
 // expected input - userId on req.user; symbol and quantity on req.body
 // expected output - response status/message

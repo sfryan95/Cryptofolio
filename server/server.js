@@ -4,6 +4,8 @@ import detectPort from 'detect-port';
 import path from 'path';
 import 'dotenv/config';
 import { fileURLToPath } from 'url';
+import './passport.js';
+import passport from 'passport';
 import apiRouter from './routes/apiRouter.js';
 import userRouter from './routes/userRouter.js';
 
@@ -11,6 +13,7 @@ const app = express();
 const PORT = 3002;
 
 console.log('current enviornment', process.env.NODE_ENV);
+app.use(passport.initialize());
 
 const __filename = fileURLToPath(import.meta.url);
 console.log(__filename);
@@ -27,6 +30,8 @@ app.use('/user', userRouter);
 app.use((req, res) => res.status(404).send("This is not the page you're looking for..."));
 
 app.use((err, req, res, next) => {
+  console.error(err.stack);
+  console.log(req.headers);
   const defaultErr = {
     log: 'Express error handler caught unknown middleware error',
     status: 500,

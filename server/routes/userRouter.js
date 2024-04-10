@@ -1,6 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import userController from '../controllers/userController.js';
+import passport from 'passport';
 const router = express.Router();
 
 const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -25,9 +26,9 @@ const upload = multer({
   },
 });
 
-router.get('/avatar', userController.authenticateToken, userController.getUserAvatar);
+router.get('/avatar', passport.authenticate('jwt', { session: false }), userController.getUserAvatar);
 
-router.get('/portfolio', userController.authenticateToken, userController.fetchUserPortfolioData);
+router.get('/portfolio', passport.authenticate('jwt', { session: false }), userController.fetchUserPortfolioData);
 
 router.post('/signup', userController.insertUser);
 
@@ -35,18 +36,18 @@ router.post('/login', userController.findUserByEmail, userController.verifyUser,
   res.status(200).json({ message: 'Login successful' });
 });
 
-router.post('/insert-coin', userController.authenticateToken, userController.insertCoin);
+router.post('/insert-coin', passport.authenticate('jwt', { session: false }), userController.insertCoin);
 
-router.patch('/update-quantity', userController.authenticateToken, userController.updateQuantity);
+router.patch('/update-quantity', passport.authenticate('jwt', { session: false }), userController.updateQuantity);
 
-router.patch('/update-email', userController.authenticateToken, userController.updateEmail);
+router.patch('/update-email', passport.authenticate('jwt', { session: false }), userController.updateEmail);
 
-router.patch('/update-password', userController.authenticateToken, userController.updatePassword);
+router.patch('/update-password', passport.authenticate('jwt', { session: false }), userController.updatePassword);
 
-router.put('/update-avatar', upload.single('avatar'), userController.authenticateToken, userController.updateAvatar);
+router.put('/update-avatar', passport.authenticate('jwt', { session: false }), upload.single('avatar'), userController.updateAvatar);
 
-router.delete('/', userController.authenticateToken, userController.deleteUserById);
+router.delete('/', passport.authenticate('jwt', { session: false }), userController.deleteUserById);
 
-router.delete('/portfolio-entry', userController.authenticateToken, userController.deletePortfolioEntryById);
+router.delete('/portfolio-entry', passport.authenticate('jwt', { session: false }), userController.deletePortfolioEntryById);
 
 export default router;
