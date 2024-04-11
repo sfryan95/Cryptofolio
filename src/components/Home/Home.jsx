@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import CoinList from './CoinList.jsx';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
@@ -12,6 +13,7 @@ import { styled } from '@mui/material/styles';
 import axios from 'axios';
 
 function Home({ successOpen, setLoginSuccessOpen, isDarkMode }) {
+  const location = useLocation();
   const [coinList, setCoinList] = useState([]);
   const [viewMode, setViewMode] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -80,7 +82,9 @@ function Home({ successOpen, setLoginSuccessOpen, isDarkMode }) {
     const debouncedHandleScroll = debounce(() => {
       const nearBottom = window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 100;
       if (nearBottom && !isLoading) {
-        fetchCryptocurrencies(currentPage, false);
+        if (location.pathname === '/') {
+          fetchCryptocurrencies(currentPage, false);
+        }
       }
     }, 500);
     window.addEventListener('scroll', debouncedHandleScroll);
