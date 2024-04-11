@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -10,6 +10,7 @@ import ResponsiveAppBar from './components/ResponsiveAppBar.jsx';
 import SignIn from './components/SignIn/SignInSide.jsx';
 import SignUp from './components/Signup/SignUp.jsx';
 import Dashboard from './components/Dashboard/Dashboard.jsx';
+import axios from 'axios';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -26,6 +27,30 @@ function App() {
       }),
     [prefersDarkMode]
   );
+
+  async function validateToken(token) {
+    try {
+      const response = await axios.get('http://localhost:3002/user/verify-token', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data.isValid;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      validateToken(token).then((isValid) => {
+        setIsAuthenticated(isValid);
+      });
+    } else {
+      setIsAuthenticated(false);
+    }
+  }, []);
 
   const draculaTheme = createTheme({
     palette: {

@@ -135,17 +135,17 @@ userController.fetchUserPortfolioData = async (req, res) => {
 
 // expected input - token from req.headers
 // expected output - forbidden/unauthorized response status/message or moves on to next middleware
-// userController.authenticateToken = (req, res, next) => {
-//   const authHeader = req.headers['authorization'];
-//   const token = authHeader && authHeader.split(' ')[1];
+userController.authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
 
-//   if (token === null) return res.status(401).json({ error: 'Unauthorized' });
-//   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-//     if (err) return res.status(403).json({ error: 'Forbidden' });
-//     req.user = { id: user.id, email: user.email };
-//     next();
-//   });
-// };
+  if (token === null) return res.status(401).json({ error: 'Unauthorized' });
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ error: 'Forbidden' });
+    req.user = { id: user.id, email: user.email };
+    next();
+  });
+};
 
 // expected input - userId on req.user; symbol and quantity on req.body
 // expected output - response status/message

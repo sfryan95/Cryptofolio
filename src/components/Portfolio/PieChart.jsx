@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PieChart, pieArcLabelClasses } from '@mui/x-charts/PieChart';
+import { cash } from '../../utilities/DataTableUtils.js';
 
 const colors = ['#031E43', '#b51963', ' #3856f7', '#184D06', '#801eab', '#BF360C', '#004D40', '#550621', '#125866', '#256538', '#A03418', '#52597C', '#471084', '#CC1136', '#085F46'];
 

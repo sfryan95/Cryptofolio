@@ -26,6 +26,10 @@ const upload = multer({
   },
 });
 
+router.get('/verify-token', userController.authenticateToken, (req, res) => {
+  res.json({ isValid: true });
+});
+
 router.get('/avatar', passport.authenticate('jwt', { session: false }), userController.getUserAvatar);
 
 router.get('/portfolio', passport.authenticate('jwt', { session: false }), userController.fetchUserPortfolioData);
