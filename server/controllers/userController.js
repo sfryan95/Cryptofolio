@@ -9,6 +9,8 @@ const userController = {};
 // expected output - JWT and/or response status/message
 userController.insertUser = async (req, res, next) => {
   const { email, password } = req.body;
+  console.log('email:', email);
+  console.log('password:', password);
   if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
     return next({
       log: 'Missing email or password in userController.insertUser.',
@@ -16,12 +18,20 @@ userController.insertUser = async (req, res, next) => {
       message: { error: 'Email and/or password cannot be empty.' },
     });
   }
+
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const userResult = await pool.query('INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id, email', [email, hashedPassword]);
+
+    if (userResult.rows.length === 0) {
+      throw new Error('User insertion failed.');
+    }
+
     const user = userResult.rows[0];
-    res.locals.user = user; //might need to be '_.id';
+    res.locals.user = user;
+
     const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '24h' });
+
     res.status(201).json({ token });
   } catch (e) {
     let errorStatus = 500;
@@ -30,8 +40,11 @@ userController.insertUser = async (req, res, next) => {
       errorStatus = 409;
       errorMessage = 'Email already exists.';
     }
+
+    console.error(`Error in userController.insertUser: ${e.message || e}`);
+
     return next({
-      log: `An error occured in userController.insertUser: ${e}`,
+      log: `An error occurred in userController.insertUser: ${e.message || e}`,
       status: errorStatus,
       message: { error: errorMessage },
     });
@@ -143,7 +156,7 @@ userController.authenticateToken = (req, res, next) => {
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) return res.status(403).json({ error: 'Forbidden' });
     req.user = { id: user.id, email: user.email };
-    next();
+    return next();
   });
 };
 

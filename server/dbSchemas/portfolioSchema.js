@@ -1,7 +1,7 @@
 import pool from '../database.js';
 
 const createPortfolioTable = async () => {
-  const queryText = `CREATE TABLE portfolio (
+  const queryText = `CREATE TABLE IF NOT EXISTS portfolio (
       id SERIAL PRIMARY KEY, 
       user_id INTEGER NOT NULL,
       symbol VARCHAR(10) NOT NULL,

@@ -33,7 +33,7 @@ function Portfolio({ isDarkMode }) {
 
   async function updatePortfolio(arr) {
     try {
-      const url = `http://localhost:3002/api/update-portfolio/${arr.map((coin) => coin.symbol).join(',')}`;
+      const url = `http://localhost:3002/api/fetch-coins/${arr.map((coin) => coin.symbol).join(',')}`;
       const response = await axios.get(url);
       const data = response.data.data;
       if (data) {

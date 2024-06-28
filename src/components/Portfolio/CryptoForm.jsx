@@ -7,13 +7,13 @@ import CryptoCoin from '../../models/CoinClass.jsx';
 import './CryptoForm.css';
 
 export default function ComboBox({ coinList, rows, setRows }) {
-  const [selectedCoin, setSelectedCoin] = useState(null);
+  const [selectedCoin, setSelectedCoin] = useState('');
   const [quantity, setQuantity] = useState('0');
 
-  function handleAutocompleteChange(event, newValue) {
-    setSelectedCoin(newValue);
+  function handleCoinNameChange(event) {
+    setSelectedCoin(event.target.value);
   }
-  // allows numbers, a single minus sign at the start, and a single decimal point
+
   const validQuantityFormat = /^-?\d*(\.\d*)?$/;
 
   function handleQuantityChange(event) {
@@ -23,17 +23,17 @@ export default function ComboBox({ coinList, rows, setRows }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (selectedCoin !== null || (validQuantityFormat.test(quantity) && quantity !== '')) {
-      const coinExists = rows.find((row) => row.symbol === selectedCoin.symbol);
+    if (selectedCoin !== '' && validQuantityFormat.test(quantity) && quantity !== '') {
+      const coinExists = rows.find((row) => row.symbol === selectedCoin.toUpperCase());
       if (!coinExists) {
         try {
-          const { data } = await axios.get(`http://localhost:3002/api/fetch-coin/${selectedCoin.symbol}`);
-          const coinData = data.data[selectedCoin.symbol];
+          const { data } = await axios.get(`http://localhost:3002/api/fetch-coins/${selectedCoin.toUpperCase()}`);
+          const coinData = data.data[selectedCoin.toUpperCase()];
           if (coinData) {
             const token = localStorage.getItem('token');
             const url = 'http://localhost:3002/user/insert-coin/';
-            const data = {
-              symbol: selectedCoin.symbol,
+            const postData = {
+              symbol: selectedCoin.toUpperCase(),
               quantity: quantity,
             };
             const config = {
@@ -43,7 +43,7 @@ export default function ComboBox({ coinList, rows, setRows }) {
               },
             };
             try {
-              const response = await axios.post(url, data, config);
+              const response = await axios.post(url, postData, config);
             } catch (e) {
               console.error('Error:', e);
             }
@@ -68,13 +68,13 @@ export default function ComboBox({ coinList, rows, setRows }) {
               return [...updatedRows, newCoin];
             });
           } else {
-            console.log('No data recieved for coin list.');
+            console.log('No data received for coin list.');
           }
         } catch (e) {
           console.error('There was an error updating price for coin list', e);
         }
       } else {
-        const index = rows.findIndex((row) => row.symbol === selectedCoin.symbol);
+        const index = rows.findIndex((row) => row.symbol === selectedCoin.toUpperCase());
         const coinToUpdate = { ...rows[index] };
         const updatedQuantity = Number(coinToUpdate.quantity) + Number(quantity);
         const token = localStorage.getItem('token');
@@ -101,7 +101,7 @@ export default function ComboBox({ coinList, rows, setRows }) {
         } else {
           const url = 'http://localhost:3002/user/update-quantity';
           const data = {
-            symbol: selectedCoin.symbol,
+            symbol: selectedCoin.toUpperCase(),
             quantity: updatedQuantity,
           };
           try {
@@ -111,7 +111,7 @@ export default function ComboBox({ coinList, rows, setRows }) {
             console.error('Error:', e);
           }
           setRows((currentRows) => {
-            const index = currentRows.findIndex((row) => row.symbol === selectedCoin.symbol);
+            const index = currentRows.findIndex((row) => row.symbol === selectedCoin.toUpperCase());
 
             if (index !== -1) {
               const { id, name, symbol, price, percent_change_24h } = coinToUpdate;
@@ -136,16 +136,26 @@ export default function ComboBox({ coinList, rows, setRows }) {
         }
       }
     } else {
-      alert('Please enter a vald coin name and quantity');
+      alert('Please enter a valid coin name and quantity');
       return;
     }
-    setSelectedCoin(null);
+    setSelectedCoin('');
     setQuantity('');
   };
 
   return (
     <form onSubmit={handleSubmit} className="combo-box">
-      <Autocomplete
+      <TextField id="outlined-helperText" name="symbol" label="Coin" onChange={handleCoinNameChange} sx={{ width: 300, rightMargin: 10 }} value={selectedCoin} />
+      <TextField onChange={handleQuantityChange} className="form-component" type="number" id="outlined-helperText" label="Quantity" name="quantity" value={quantity} />
+      <Button variant="outlined" id="submit" type="submit" value="submit">
+        Submit
+      </Button>
+    </form>
+  );
+}
+
+{
+  /* <Autocomplete
         onChange={handleAutocompleteChange}
         className="form-component"
         disablePortal
@@ -156,11 +166,5 @@ export default function ComboBox({ coinList, rows, setRows }) {
         value={selectedCoin}
         renderInput={(params) => <TextField {...params} label="Coin" name="symbol" />}
         isOptionEqualToValue={(option, value) => option.symbol === value.symbol}
-      />
-      <TextField onChange={handleQuantityChange} className="form-component" type="number" id="outlined-helperText" label="Quantity" name="quantity" value={quantity} />
-      <Button variant="outlined" id="submit" type="submit" value="submit">
-        Submit
-      </Button>
-    </form>
-  );
+      /> */
 }
